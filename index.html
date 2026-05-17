@@ -27,6 +27,7 @@
             text-align: center;
             border: 1px solid rgba(245, 222, 209, 0.5);
             backdrop-filter: blur(8px);
+            margin: 20px 0;
         }
 
         h1 {
@@ -120,6 +121,12 @@
                 <label for="hora">Hora Exacta</label>
                 <input type="time" id="hora" required>
             </div>
+
+            <!-- NUEVO CAMPO: Lugar de Nacimiento -->
+            <div class="form-group">
+                <label for="lugar">Ciudad y País de Nacimiento</label>
+                <input type="text" id="lugar" placeholder="Ej. Monterrey, México" required>
+            </div>
             
             <button type="submit" id="btn-enviar">Recibir Mensaje</button>
         </form>
@@ -135,27 +142,23 @@
             
             const fecha = document.getElementById('fecha').value;
             const hora = document.getElementById('hora').value;
+            const lugar = document.getElementById('lugar').value; // Captura el lugar
             const boton = document.getElementById('btn-enviar');
             const contenedorResultado = document.getElementById('horoscopo-resultado');
             const textoHoroscopo = document.getElementById('texto-horoscopo');
             
-            // Cambiamos el estado del botón para simular la espera
             boton.disabled = true;
             boton.innerText = "Consultando a los astros...";
             
-            // Simulación de retraso de 1.5 segundos para que se sienta real
             setTimeout(() => {
-                
-                // Texto simulado con enfoque antroposófico
+                // Mensaje simulado que ahora contempla los tres datos esenciales
                 let mensajeSimulado = `Querido buscador,<br><br>
-                Hoy las fuerzas sutiles se alinean para recordarte la importancia del ritmo orgánico en tu vida cotidiana. Las configuraciones celestes asociadas al momento de tu nacimiento sugieren que hoy es un día idóneo para respirar con consciencia y observar los pequeños milagros cotidianos.<br><br>
+                Hoy las fuerzas sutiles se alinean considerando el cielo bajo el cual naciste en <strong>${lugar}</strong>. Las configuraciones celestes asociadas al momento de tu nacimiento sugieren que hoy es un día idóneo para respirar con consciencia y observar los pequeños milagros cotidianos.<br><br>
                 Camina con la certeza de que tu sol interior brilla con fuerza, invitándote a confiar plenamente en tus procesos de maduración internos. Abre tus sentidos y tu corazón a los encuentros inesperados; en la calidez de lo humano reside la guía que tu alma necesita para el día de hoy.`;
 
-                // Mostramos el resultado
                 textoHoroscopo.innerHTML = mensajeSimulado;
                 contenedorResultado.style.display = 'block';
                 
-                // Devolvemos el botón a su estado original
                 boton.disabled = false;
                 boton.innerText = "Recibir Mensaje";
                 
