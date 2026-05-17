@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tu Horóscopo Diario Diurno</title>
+    <style>
+        /* Paleta de colores antroposófica: tonos cálidos, orgánicos y suaves */
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #fff5f5 0%, #fff9f3 100%);
+            color: #4a3b32;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 40px 30px;
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(224, 196, 180, 0.2);
+            max-width: 420px;
+            width: 90%;
+            text-align: center;
+            border: 1px solid rgba(245, 222, 209, 0.5);
+            backdrop-filter: blur(8px);
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            color: #8c6239;
+            margin-bottom: 10px;
+            font-weight: normal;
+            letter-spacing: 1px;
+        }
+
+        p.subtitle {
+            font-size: 0.95rem;
+            color: #7d685c;
+            line-height: 1.5;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            color: #7d685c;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e6d5cb;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 1rem;
+            color: #4a3b32;
+            background-color: #fffdfc;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #d4b296;
+            box-shadow: 0 0 8px rgba(212, 178, 150, 0.3);
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #e2b49a 0%, #d49a83 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(212, 154, 131, 0.3);
+            transition: transform 0.2s ease, opacity 0.2s ease;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+            opacity: 0.95;
+        }
+
+        /* Espacio reservado para el horóscopo */
+        #horoscopo-resultado {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px dashed #e6d5cb;
+            display: none; /* Se ocultará hasta que la IA responda */
+        }
+
+        .mensaje-ia {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            color: #5a4538;
+            text-align: justify;
+        }
+
+        .mensaje-ia p {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Tu Guía Diaria</h1>
+        <p class="subtitle">Descubre el mensaje que los astros tienen para tu caminar hoy. Un espacio de luz y consciencia.</p>
+        
+        <form id="horoscopo-form">
+            <div class="form-group">
+                <label for="fecha">Fecha de Nacimiento</label>
+                <input type="date" id="fecha" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="hora">Hora Exacta</label>
+                <input type="time" id="hora" required>
+            </div>
+            
+            <button type="submit">Recibir Mensaje</button>
+        </form>
+
+        <div id="horoscopo-resultado">
+            <div class="mensaje-ia" id="texto-horoscopo">
+                </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('horoscopo-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Capturamos los datos del usuario
+            const fecha = document.getElementById('fecha').value;
+            const hora = document.getElementById('hora').value;
+            
+            // Simulación temporal del mensaje (aquí conectaremos la API de Gemini después)
+            const contenedorResultado = document.getElementById('horoscopo-resultado');
+            const textoHoroscopo = document.getElementById('texto-horoscopo');
+            
+            textoHoroscopo.innerHTML = `
+                <p><strong>Querido buscador,</strong> hoy las fuerzas celestes se alinean para recordarte la importancia de la paciencia y el ritmo orgánico de la vida. Tu sol interior brilla con fuerza, invitándote a confiar en tus procesos sutiles.</p>
+                <p>Camina el día de hoy con la certeza de que cada paso que das está sostenido por una sabiduría mayor. Abre tu corazón a los encuentros inesperados; ahí reside la verdadera magia del día.</p>
+            `;
+            
+            contenedorResultado.style.display = 'block';
+        });
+    </script>
+</body>
+</html>
