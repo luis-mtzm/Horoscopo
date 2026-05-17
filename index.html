@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tu Horóscopo Diario</title>
+    <title>Tu Horóscopo Diario Profesional</title>
     <style>
         body {
             font-family: 'Georgia', serif;
@@ -22,7 +22,7 @@
             padding: 40px 30px;
             border-radius: 24px;
             box-shadow: 0 8px 32px rgba(224, 196, 180, 0.2);
-            max-width: 420px;
+            max-width: 440px;
             width: 90%;
             text-align: center;
             border: 1px solid rgba(245, 222, 209, 0.5);
@@ -98,14 +98,27 @@
         }
 
         .triada-astrologica {
-            background-color: rgba(245, 222, 209, 0.3);
+            background-color: rgba(245, 222, 209, 0.25);
             padding: 15px;
             border-radius: 14px;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             font-size: 0.95rem;
             color: #8c6239;
             display: flex;
             justify-content: space-around;
+        }
+
+        /* Contenedor del lienzo de la Carta Natal */
+        .carta-natal-wrapper {
+            width: 100%;
+            max-width: 320px;
+            margin: 0 auto 25px auto;
+            background-color: #fffdfb;
+            border-radius: 50%;
+            box-shadow: inset 0 0 20px rgba(224, 196, 180, 0.15), 0 4px 12px rgba(224, 196, 180, 0.1);
+            border: 1px solid rgba(245, 222, 209, 0.4);
+            padding: 10px;
+            box-sizing: border-box;
         }
 
         .mensaje-ia {
@@ -120,7 +133,7 @@
 
     <div class="container">
         <h1>Tu Guía Diaria</h1>
-        <p class="subtitle">Descubre el mensaje que los astros tienen para tu caminar hoy. Un espacio de luz y consciencia.</p>
+        <p class="subtitle">Descubre tu mapa celestial personalizado con precisión astronómica y sintoniza con tu mensaje del día.</p>
         
         <form id="horoscopo-form">
             <div class="form-group">
@@ -134,85 +147,183 @@
             </div>
 
             <div class="form-group">
-                <label for="lugar">Ciudad y País de Nacimiento</label>
-                <input type="text" id="lugar" placeholder="Ej. Monterrey, México" required>
+                <label for="lugar">Ciudad de Nacimiento</label>
+                <input type="text" id="lugar" placeholder="Ej. Monterrey, Mexico" required>
             </div>
             
-            <button type="submit" id="btn-enviar">Calcular Mi Mapa</button>
+            <button type="submit" id="btn-enviar">Calcular Mapa y Trazo</button>
         </form>
 
         <div id="horoscopo-resultado">
-            <!-- Bloque del Compendio Local: Muestra los signos calculados al instante -->
             <div class="triada-astrologica">
                 <div>☀️ Sol: <strong id="signo-solar">-</strong></div>
                 <div>🌅 Ascendente: <strong id="signo-ascendente">-</strong></div>
             </div>
+
+            <!-- LIENZO VECTORIAL DONDE SE DIBUJA LA CARTA DIÁMICAMENTE -->
+            <div class="carta-natal-wrapper">
+                <svg id="canvas-carta" viewBox="0 0 300 300" width="100%" height="100%">
+                    <!-- El código dinámico de JavaScript pintará las líneas aquí -->
+                </svg>
+            </div>
+
             <div class="mensaje-ia" id="texto-horoscopo"></div>
         </div>
     </div>
 
     <script>
-        // Listado de los signos del zodiaco
-        const signos = ["Capricornio", "Acuario", "Piscis", "Aries", "Tauro", "Géminis", "Cáncer", "Leo", "Virgo", "Libra", "Escorpio", "Sagitario"];
+        const signos = ["Aries", "Tauro", "Géminis", "Cáncer", "Leo", "Virgo", "Libra", "Escorpio", "Sagitario", "Capricornio", "Acuario", "Piscis"];
 
-        // 1. COMPENDIO MATEMÁTICO LOCAL
-        function obtenerSignoSolar(mes, dia) {
-            const fechasCorte = [20, 19, 20, 20, 21, 21, 22, 23, 23, 23, 22, 22];
-            return (dia < fechasCorte[mes - 1]) ? signos[mes - 1] : signos[mes % 12];
+        // 1. MOTORES DE CÁLCULO ASTRONÓMICO PROFESIONAL
+        function calcularSignoSolarPreciso(dia, mes) {
+            const cortes = [20, 19, 20, 20, 21, 21, 22, 23, 23, 23, 22, 22];
+            const indice = (dia < cortes[mes - 1]) ? mes - 2 : mes - 1;
+            return { nombre: signos[(indice + 12) % 12], gradoAbsoluto: ((indice + 12) % 12) * 30 + (dia * 1) };
         }
 
-        function calcularAscendenteEstimado(mes, dia, horaStr) {
-            // Estimación clásica basada en la posición del sol y la hora de nacimiento
+        function calcularAscendenteReal(fechaStr, horaStr, lat, lon) {
+            const [ano, mes, dia] = fechaStr.split('-').map(Number);
             const [horas, minutos] = horaStr.split(':').map(Number);
-            const signoSolar = obtenerSignoSolar(mes, dia);
-            const indiceSolar = signos.indexOf(signoSolar);
-            
-            // Cada 2 horas desde el amanecer (aprox 6:00 AM) el ascendente cambia de signo
-            let horaCalculo = horas + (minutos / 60);
-            let desfaseHoras = (horaCalculo >= 6) ? (horaCalculo - 6) : (horaCalculo + 18);
-            let signosMovidos = Math.floor(desfaseHoras / 2);
-            
-            let indiceAscendente = (indiceSolar + signosMovidos) % 12;
-            return signos[indiceAscendente];
+
+            const d = (Date.UTC(ano, mes - 1, dia, horas, minutes = 0) - Date.UTC(2000, 0, 1, 12, 0)) / 86400000;
+            let gmst = 18.697374558 + 24.06570982441908 * d;
+            gmst = gmst % 24; if (gmst < 0) gmst += 24;
+
+            const tiempoSidereoLocal = (gmst + lon / 15) % 24;
+            const ramc = tiempoSidereoLocal * 15;
+
+            const obliquidad = 23.4392911 * (Math.PI / 180);
+            const ramcRad = ramc * (Math.PI / 180);
+            const latRad = lat * (Math.PI / 180);
+
+            let ascRad = Math.atan2(-Math.cos(ramcRad), (Math.sin(obliquidad) * Math.tan(latRad) + Math.cos(obliquidad) * Math.sin(ramcRad)));
+            let ascDeg = ascRad * (180 / Math.PI);
+            if (ascDeg < 0) ascDeg += 360;
+
+            const indiceSigno = Math.floor(ascDeg / 30);
+            return { nombre: signos[indiceSigno], gradoAbsoluto: ascDeg };
         }
 
-        // 2. CONTROL DEL FORMULARIO
-        document.getElementById('horoscopo-form').addEventListener('submit', function(e) {
+        // 2. MOTOR GRÁFICO (DIBUJAR EL TRAZO ANTROPOSÓFICO)
+        function dibujarCartaNatal(gradoSol, gradoAsc) {
+            const svg = document.getElementById('canvas-carta');
+            svg.innerHTML = ''; // Limpiamos trazos anteriores
+            
+            const cx = 150, cy = 150; // Centro del círculo
+            const radioExterior = 130;
+            const radioInterior = 100;
+            const radioCentral = 30;
+
+            // Rotamos el gráfico completo para que el Ascendente quede exactamente a la izquierda (Oeste visual, regla astrológica)
+            const rotacionBase = 180 - gradoAsc;
+
+            // Círculos concéntricos principales (Estilo Waldorf/Suave)
+            svg.innerHTML += `<circle cx="${cx}" cy="${cy}" r="${radioExterior}" fill="none" stroke="#d4b296" stroke-width="1.5" />`;
+            svg.innerHTML += `<circle cx="${cx}" cy="${cy}" r="${radioInterior}" fill="#fffdfa" stroke="#e6d5cb" stroke-width="1" />`;
+            svg.innerHTML += `<circle cx="${cx}" cy="${cy}" r="${radioCentral}" fill="#fff9f3" stroke="#e6d5cb" stroke-width="1" />`;
+
+            // Trazamos las 12 divisiones de los signos (Cada 30 grados)
+            for (let i = 0; i < 12; i++) {
+                let anguloDeg = (i * 30) + rotacionBase;
+                let anguloRad = anguloDeg * (Math.PI / 180);
+                
+                let x1 = cx + radioInterior * Math.cos(anguloRad);
+                let y1 = cy + radioInterior * Math.sin(anguloRad);
+                let x2 = cx + radioExterior * Math.cos(anguloRad);
+                let y2 = cy + radioExterior * Math.sin(anguloRad);
+                
+                // Líneas divisorias suaves
+                svg.innerHTML += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#f2e4dc" stroke-width="1" />`;
+                
+                // Iniciales de los signos en la rueda exterior
+                let anguloTextoRad = ((i * 30) + 15 + rotacionBase) * (Math.PI / 180);
+                let xt = cx + (radioExterior - 15) * Math.cos(anguloTextoRad);
+                let yt = cy + (radioExterior - 15) * Math.sin(anguloTextoRad);
+                let letraSigno = signos[i].substring(0, 2);
+                svg.innerHTML += `<text x="${xt}" y="${yt}" font-family='Georgia' font-size="9" fill="#a1887f" text-anchor="middle" alignment-baseline="central">${letraSigno}</text>`;
+            }
+
+            // Trazamos las 12 Casas Astrológicas (Líneas desde el centro hasta el círculo interior)
+            for (let i = 0; i < 12; i++) {
+                let anguloRad = (i * 30) * (Math.PI / 180); // Ejes relativos al Ascendente
+                let x1 = cx + radioCentral * Math.cos(anguloRad);
+                let y1 = cy + radioCentral * Math.sin(anguloRad);
+                let x2 = cx + radioInterior * Math.cos(anguloRad);
+                let y2 = cy + radioInterior * Math.sin(anguloRad);
+                svg.innerHTML += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#ebdcd3" stroke-width="1" stroke-dasharray="2,2" />`;
+            }
+
+            // DIBUJAR LA LÍNEA DEL ASCENDENTE (Flecha dorada horizontal a la izquierda)
+            svg.innerHTML += `<line x1="${cx - radioInterior}" y1="${cy}" x2="${cx + radioInterior}" y2="${cy}" stroke="#c99e7f" stroke-width="2" />`;
+            svg.innerHTML += `<polygon points="${cx - radioInterior},${cy} ${cx - radioInterior + 8},${cy - 4} ${cx - radioInterior + 8},${cy + 4}" fill="#c99e7f" />`;
+
+            // COLOCAR EL SOL DIÁMICAMENTE
+            let anguloSolRad = (gradoSol + rotacionBase) * (Math.PI / 180);
+            let xSol = cx + (radioInterior - 30) * Math.cos(anguloSolRad);
+            let ySol = cy + (radioInterior - 30) * Math.sin(anguloSolRad);
+            
+            // Icono del Sol antroposófico (Círculo con punto central)
+            svg.innerHTML += `<circle cx="${xSol}" cy="${ySol}" r="6" fill="#fcecd2" stroke="#d49a83" stroke-width="1.5" />`;
+            svg.innerHTML += `<circle cx="${xSol}" cy="${ySol}" r="1" fill="#d49a83" />`;
+        }
+
+        // 3. CONTROLADOR DE LA INTERFAZ
+        document.getElementById('horoscopo-form').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const fechaVal = document.getElementById('fecha').value;
-            const horaVal = document.getElementById('hora').value;
-            const lugarVal = document.getElementById('lugar').value;
+            const fecha = document.getElementById('fecha').value;
+            const hora = document.getElementById('hora').value;
+            const lugar = document.getElementById('lugar').value;
             const boton = document.getElementById('btn-enviar');
             const contenedorResultado = document.getElementById('horoscopo-resultado');
             
-            // Separamos año, mes y día de la fecha introducida
-            const [ano, mes, dia] = fechaVal.split('-').map(Number);
-            
-            // Ejecutamos el compendio local al instante
-            const solCalculado = obtenerSignoSolar(mes, dia);
-            const ascendenteCalculado = calcularAscendenteEstimado(mes, dia, horaVal);
-            
-            // Pintamos los resultados en la interfaz de inmediato
-            document.getElementById('signo-solar').innerText = solCalculado;
-            document.getElementById('signo-ascendente').innerText = ascendenteCalculado;
-            
             boton.disabled = true;
-            boton.innerText = "Sintonizando el clima astral...";
-            
-            // Simulación del paso 2 (Aquí es donde la IA responderá basándose en los datos calculados)
-            setTimeout(() => {
+            boton.innerText = "Sintonizando coordenadas del lugar...";
+
+            try {
+                const urlGeo = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(lugar)}&limit=1`;
+                const respuestaGeo = await fetch(urlGeo, { headers: { 'User-Agent': 'MiHoroscopoAntroposoficoApp' } });
+                const datosGeo = await respuestaGeo.json();
+
+                if (!datosGeo || datosGeo.length === 0) {
+                    alert("No pudimos localizar la ciudad celestial. Revisa la ortografía.");
+                    boton.disabled = false;
+                    boton.innerText = "Calcular Mapa y Trazo";
+                    return;
+                }
+
+                const latitud = parseFloat(datosGeo[0].lat);
+                const longitud = parseFloat(datosGeo[0].lon);
+
+                boton.innerText = "Trazando tu mandala personal...";
+
+                const [ano, mes, dia] = fecha.split('-').map(Number);
+                const solObj = calcularSignoSolarPreciso(dia, mes);
+                const ascObj = calcularAscendenteReal(fecha, hora, latitud, longitud);
+
+                // Pintamos los textos de la tríada
+                document.getElementById('signo-solar').innerText = solObj.nombre;
+                document.getElementById('signo-ascendente').innerText = ascObj.nombre;
+
+                // EJECUTAMOS EL TRAZO VECTORIAL REAL DE LA CARTA NATAL
+                dibujarCartaNatal(solObj.gradoAbsoluto, ascObj.gradoAbsoluto);
+
                 let textoHoroscopo = document.getElementById('texto-horoscopo');
                 textoHoroscopo.innerHTML = `
-                    Querido buscador nacido en <strong>${lugarVal}</strong>,<br><br>
-                    Al integrar tu esencia con el <strong>Sol en ${solCalculado}</strong> y tu caminar guiado por el <strong>Ascendente en ${ascendenteCalculado}</strong>, la atmósfera de hoy te propone un reencuentro con tu centro espiritual.<br><br>
-                    Utiliza la estructura de tu signo solar para organizar tus intenciones en este día, mientras dejas que la energía de tu ascendente suavice tus interacciones con el entorno. Un mensaje de paz te acompaña.
+                    Querido buscador nacido bajo el cielo de <strong>${datosGeo[0].display_name.split(',')[0]}</strong><br><br>
+                    El trazo superior despliega la geometría sagrada del espacio-tiempo en el segundo exacto de tu encarnación. Contempla la línea dorada a tu izquierda: representa tu <strong>Ascendente en ${ascObj.nombre}</strong>, el portal y la actitud con la que tu alma saluda al mundo.<br><br>
+                    Tu <strong>Sol en ${solObj.nombre}</strong> (representado por el núcleo radiante en la rueda) ilumina hoy tus casas sutiles, invitándote a equilibrar tu energía vital con un sentido de amor profundo, mindfulness y enraizamiento terrestre. Confía en el hermoso mapa que hoy se dibuja para ti.
                 `;
-                
+
                 contenedorResultado.style.display = 'block';
+
+            } catch (error) {
+                console.error(error);
+                alert("Hubo un contratiempo al alinear las esferas celestes.");
+            } finally {
                 boton.disabled = false;
-                boton.innerText = "Calcular Mi Mapa";
-            }, 1200);
+                boton.innerText = "Calcular Mapa y Trazo";
+            }
         });
     </script>
 </body>
