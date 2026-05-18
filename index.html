@@ -72,9 +72,19 @@
             background-color: #fffdfc;
             box-sizing: border-box;
             appearance: none;
+        }
+
+        select {
             background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='%238c6239'><path d='M0 0l5 6 5-6z'/></svg>");
             background-repeat: no-repeat;
             background-position: right 15px center;
+        }
+
+        .input-api {
+            background-color: #fff9f5;
+            border: 1px dashed #d49a83;
+            font-family: monospace;
+            font-size: 0.9rem;
         }
 
         button {
@@ -91,6 +101,11 @@
             margin-top: 10px;
         }
 
+        button:disabled {
+            background: #e6d5cb;
+            cursor: not-allowed;
+        }
+
         /* PANTALLA 2: DASHBOARD DE PANTALLA DIVIDIDA */
         .dashboard-screen {
             display: none; 
@@ -101,7 +116,6 @@
             box-sizing: border-box;
         }
 
-        /* CONTENEDORES PRINCIPALES IZQUIERDA Y DERECHA */
         .column-left, .column-right {
             flex: 1;
             background-color: rgba(255, 255, 255, 0.85);
@@ -115,7 +129,6 @@
             flex-direction: column;
         }
 
-        /* SECCIÓN DE LA CARTA NATAL (IZQUIERDA ARRIBA) */
         .carta-natal-section {
             display: flex;
             flex-direction: column;
@@ -146,7 +159,6 @@
             box-sizing: border-box;
         }
 
-        /* TEXTOS EXPLICATIVOS */
         h2 {
             font-size: 1.4rem;
             color: #8c6239;
@@ -183,7 +195,6 @@
             font-weight: bold;
         }
 
-        /* RESPONSIVE: DISEÑO ADAPTABLE A CELULARES */
         @media (max-width: 850px) {
             body { display: block; padding: 10px; }
             .dashboard-screen { flex-direction: column; width: 100%; margin: 0; }
@@ -220,13 +231,17 @@
                     <option value="20.96,-89.61,-6,Mérida (Yucatán)">Mérida, Yucatán</option>
                 </select>
             </div>
+
+            <div class="form-group">
+                <label for="api-key-input">Clave de Acceso al Cosmos</label>
+                <input type="password" id="api-key-input" class="input-api" placeholder="Pega aquí tu Gemini API Key..." required>
+            </div>
             
             <button type="submit" id="btn-enviar">Calcular Mi Mapa Astral</button>
         </form>
     </div>
 
     <div id="pantalla-dashboard" class="dashboard-screen">
-        
         <div class="column-left">
             <div class="carta-natal-section">
                 <div class="triada-astrologica">
@@ -241,34 +256,41 @@
             </div>
             <div class="explicacion-natal-section">
                 <h2>Tu Esencia de Nacimiento</h2>
-                <div id="texto-natal-fijo" class="texto-bloque"></div>
+                <div id="texto-natal-fijo" class="texto-bloque">Cargando lectura del alma...</div>
             </div>
         </div>
 
         <div class="column-right">
             <span id="fecha-actual-badge" class="date-badge">-</span>
             <h2>El Consejo del Día</h2>
-            
             <div class="consejo-diario-contenedor">
                 <h3>🍃 Para la Vida Personal</h3>
-                <div id="consejo-vida" class="texto-bloque"></div>
+                <div id="consejo-vida" class="texto-bloque">Sintonizando vibración personal...</div>
                 
                 <h3>💼 Para el Ámbito Laboral</h3>
-                <div id="consejo-laboral" class="texto-bloque"></div>
+                <div id="consejo-laboral" class="texto-bloque">Estructurando propósito consciente...</div>
             </div>
         </div>
-
     </div>
 
     <script>
+        const MODEL_NAME = "gemini-3-flash-preview"; 
         const signos = ["Aries", "Tauro", "Géminis", "Cáncer", "Leo", "Virgo", "Libra", "Escorpio", "Sagitario", "Capricornio", "Acuario", "Piscis"];
         const glifos = { Sol: "☉", Luna: "☽", Mercurio: "☿", Venus: "♀", Marte: "♂" };
+
+        // AUTO-COMPLETAR CLAVE: Intenta recordar si el usuario ya metió la clave en el pasado
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedKey = localStorage.getItem('user_cosmos_key');
+            if (savedKey) {
+                document.getElementById('api-key-input').value = savedKey;
+            }
+        });
 
         function obtenerSignoDeGrado(longitud) {
             return signos[Math.floor((longitud % 360) / 30)];
         }
 
-        // MOTOR MATEMÁTICO LOCAL
+        // MOTOR DE COORDENADAS LOCALES
         function calcularEfeméridesNativas(fechaStr, horaStr, lat, lon, timezone) {
             const [ano, mes, dia] = fechaStr.split('-').map(Number);
             const [horas, minutos] = horaStr.split(':').map(Number);
@@ -281,7 +303,6 @@
 
             let posSol = (280.460 + 0.9856474 * d) % 360;
             let posLuna = (218.316 + 13.176396 * d) % 360;
-            
             if (ano === 1982 && mes === 12) { posLuna = 198; }
 
             let posMercurio = (posSol - 42) % 360; 
@@ -377,52 +398,107 @@
             });
         }
 
-        // OBTENER LA FECHA ACTUAL FORMATEADA EN ESPAÑOL
         function obtenerFechaActualFormateada() {
-            const opciones = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            const hoy = new Date();
-            return hoy.toLocaleDateString('es-ES', opciones);
+            return new Date().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
         }
 
-        // CONTROLADOR DE INTERFAZ
-        document.getElementById('horoscopo-form').addEventListener('submit', function(e) {
+        // ENLACE ASÍNCRONO DIRECTO CON LA API DE GEMINI ENTRANTE
+        async function solicitarInterpretacionIA(datos, ciudad, fechaHoy, apiKeyDinamica) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${apiKeyDinamica}`;
+            
+            const prompt = `
+                Actúa como un consultor astrológico antroposófico senior y experto en mindfulness, profundamente alineado con la filosofía de Rudolf Steiner y la pedagogía Waldorf.
+                La persona nació en ${ciudad} y tiene la siguiente configuración planetaria calculada: Sol en ${datos.Sol.nombre}, Luna en ${datos.Luna.nombre} y Ascendente en ${datos.Ascendente.nombre}.
+                La fecha actual que transcurre hoy es: ${fechaHoy}.
+
+                Redacta un reporte personalizado siguiendo estas instrucciones estrictas:
+                - Tono: Profundamente amoroso, consciente, poético y enfocado en el enraizamiento espiritual.
+                - Restricción: Está estrictamente prohibido usar un tono predictivo, adivinatorio, alarmista o comercial burdo. Aborda las configuraciones planetarias como impulsos para equilibrar el pensar, el sentir y el actuar.
+                - Estructura obligatoria: Debes estructurar tu respuesta separando los contenidos exactamente con estas tres etiquetas, sin usar textos en negrita ni formatos markdown adicionales alrededor de ellas:
+
+                [NATAL] 
+                Escribe un párrafo profundo (aproximadamente 4-5 líneas) describiendo la esencia de nacimiento de la persona, analizando cómo interactúan su Sol, su Luna y su Ascendente bajo la armonía geométrica del alma desde una perspectiva antroposófica permanente.
+
+                [VIDA]
+                Escribe un párrafo (aproximadamente 4 líneas) con el consejo de mindfulness amoroso para su vida personal el día de hoy (${fechaHoy}), sintonizando con su Ascendente.
+
+                [LABORAL]
+                Escribe un párrafo (aproximadamente 4 líneas) con el consejo para su ámbito laboral y profesional hoy, enfocado en manifestar una voluntad consciente, un pensar ordenado y paz en sus tareas de este día.
+            `;
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
+
+                const json = await response.json();
+                const textoCompleto = json.candidates[0].content.parts[0].text;
+
+                const natalPart = textoCompleto.split('[NATAL]')[1]?.split('[VIDA]')[0]?.trim();
+                const vidaPart = textoCompleto.split('[VIDA]')[1]?.split('[LABORAL]')[0]?.trim();
+                const laboralPart = textoCompleto.split('[LABORAL]')[1]?.trim();
+
+                return {
+                    natal: natalPart || "Tu lectura del alma está lista para integrarse.",
+                    vida: vidaPart || "Fluye con la paz del entorno personal hoy.",
+                    laboral: laboralPart || "Manifiesta orden y propósito en tu jornada profesional."
+                };
+            } catch (error) {
+                console.error("Error en Gemini API:", error);
+                return {
+                    natal: "Ocurrió un desfase al conectar con las corrientes celestes. Verifica que la API Key introducida sea correcta.",
+                    vida: "Mantén la respiración consciente mientras reconfiguras el acceso.",
+                    laboral: "Dedica este espacio del día a estructurar tus intenciones con paciencia."
+                };
+            }
+        }
+
+        // CONTROLADOR DE ACCIÓN
+        document.getElementById('horoscopo-form').addEventListener('submit', async function(e) {
             e.preventDefault();
+            
             const fecha = document.getElementById('fecha').value;
             const hora = document.getElementById('hora').value;
             const lugarSelect = document.getElementById('lugar-select').value;
+            const apiKeyIngresada = document.getElementById('api-key-input').value.trim();
+            const boton = document.getElementById('btn-enviar');
             
+            if(!apiKeyIngresada) {
+                alert("Por favor introduce una clave de acceso válida.");
+                return;
+            }
+
+            // Guardar localmente para comodidad de tu familia en la siguiente visita
+            localStorage.setItem('user_cosmos_key', apiKeyIngresada);
+
+            boton.disabled = true;
+            boton.innerText = "Sintonizando canales celestes...";
+
             const [latStr, lonStr, tzStr, nombreCiudad] = lugarSelect.split(',');
             const datos = calcularEfeméridesNativas(fecha, hora, parseFloat(latStr), parseFloat(lonStr), parseFloat(tzStr));
 
-            // 1. Datos Tríada Izquierda
+            // Despliegue visual inmediato de la interfaz
             document.getElementById('lbl-solar').innerText = "Sol: " + datos.Sol.nombre;
             document.getElementById('lbl-lunar').innerText = "Luna: " + datos.Luna.nombre;
             document.getElementById('lbl-ascendente').innerText = "Asc: " + datos.Ascendente.nombre;
-
-            // 2. Renderizar Mandala
+            
             dibujarMandalaUniversal(datos);
+            
+            const fechaHoyText = obtenerFechaActualFormateada();
+            document.getElementById('fecha-actual-badge').innerText = fechaHoyText;
 
-            // 3. Imprimir Fecha Actual en el Badge de la Derecha
-            document.getElementById('fecha-actual-badge').innerText = obtenerFechaActualFormateada();
-
-            // 4. Texto Fijo Izquierda Abajo
-            document.getElementById('texto-natal-fijo').innerHTML = `
-                Has encarnado bajo la vibración estructural de un <strong>Sol en ${datos.Sol.nombre}</strong> y una <strong>Luna en ${datos.Luna.nombre}</strong>, abriendo tu portal físico a través de un <strong>Ascendente en ${datos.Ascendente.nombre}</strong>.<br><br>
-                Desde la perspectiva antroposófica de Rudolf Steiner, tu mapa geométrico de Casas Iguales revela una distribución simétrica de tus fuerzas anímicas. La relación angular de tus trazos internos (aspectos celestes) muestra el plano arquetípico que tu alma eligió para equilibrar el pensar, el sentir y el actuar en esta encarnación material. Este mapa es tu impronta permanente, el templo desde el cual caminas.
-            `;
-
-            // 5. Inyección del Consejo Dividido (Derecha Dinámica)
-            document.getElementById('consejo-vida').innerHTML = `
-                El flujo celeste que rodea tu <strong>Ascendente en ${datos.Ascendente.nombre}</strong> te invita hoy a buscar un espacio de quietud reflexiva en tu intimidad. Es un momento propicio para armonizar tus ritmos orgánicos y suavizar tus interacciones familiares o personales desde la empatía pura. Deja que la calidez del corazón disuelva cualquier tensión acumulada, recordando que el verdadero equilibrio del alma se cultiva en el cuidado amoroso de tus espacios sagrados cotidianos.
-            `;
-
-            document.getElementById('consejo-laboral').innerHTML = `
-                En tus actividades profesionales, la alineación sutil con tu <strong>Sol en ${datos.Sol.nombre}</strong> te llama a manifestar una voluntad consciente, noble y centrada. Evita dejarte arrastrar por la agitación y las prisas del entorno laboral terrestre; en su lugar, organiza tus tareas con una estructura clara y un propósito elevado. Al interactuar con colegas o proyectos en este día, permite que tu pensar sea un puente de orden y paz, irradiando una colaboración constructiva y amorosa.
-            `;
-
-            // 6. Activar Dashboard SPA
             document.getElementById('pantalla-bienvenida').style.display = 'none';
             document.getElementById('pantalla-dashboard').style.display = 'flex';
+
+            // Consultar a la IA usando la llave ingresada en el formulario
+            const lecturasIA = await solicitarInterpretacionIA(datos, nombreCiudad, fechaHoyText, apiKeyIngresada);
+
+            // Pintar los textos devueltos
+            document.getElementById('texto-natal-fijo').innerHTML = lecturasIA.natal;
+            document.getElementById('consejo-vida').innerHTML = lecturasIA.vida;
+            document.getElementById('consejo-laboral').innerHTML = lecturasIA.laboral;
         });
     </script>
 </body>
