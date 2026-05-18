@@ -91,9 +91,9 @@
             margin-top: 10px;
         }
 
-        /* PANTALLA 2: DASHBOARD DE PANTALLA DIVIDIDA (Oculto al inicio) */
+        /* PANTALLA 2: DASHBOARD DE PANTALLA DIVIDIDA */
         .dashboard-screen {
-            display: none; /* Se activa con JavaScript */
+            display: none; 
             width: 95vw;
             max-width: 1200px;
             margin: 20px auto;
@@ -138,7 +138,7 @@
 
         .carta-natal-wrapper {
             width: 100%;
-            max-width: 340px; /* Crecimiento visual del trazo */
+            max-width: 340px; 
             background-color: #fffdfb;
             border-radius: 50%;
             border: 1px solid rgba(245, 222, 209, 0.4);
@@ -157,6 +157,15 @@
             padding-bottom: 5px;
         }
 
+        h3 {
+            font-size: 1.1rem;
+            color: #a1887f;
+            margin-top: 20px;
+            margin-bottom: 8px;
+            font-weight: normal;
+            letter-spacing: 0.5px;
+        }
+
         .texto-bloque {
             font-size: 1rem;
             line-height: 1.6;
@@ -166,11 +175,12 @@
 
         .date-badge {
             font-size: 0.85rem;
-            color: #a1887f;
+            color: #d49a83;
             text-transform: uppercase;
             letter-spacing: 1px;
             margin-bottom: 10px;
             display: block;
+            font-weight: bold;
         }
 
         /* RESPONSIVE: DISEÑO ADAPTABLE A CELULARES */
@@ -236,9 +246,16 @@
         </div>
 
         <div class="column-right">
-            <span class="date-badge">Sintonía para Hoy</span>
+            <span id="fecha-actual-badge" class="date-badge">-</span>
             <h2>El Consejo del Día</h2>
-            <div id="texto-consejo-diario" class="texto-bloque"></div>
+            
+            <div class="consejo-diario-contenedor">
+                <h3>🍃 Para la Vida Personal</h3>
+                <div id="consejo-vida" class="texto-bloque"></div>
+                
+                <h3>💼 Para el Ámbito Laboral</h3>
+                <div id="consejo-laboral" class="texto-bloque"></div>
+            </div>
         </div>
 
     </div>
@@ -296,7 +313,7 @@
             };
         }
 
-        // MOTOR GRÁFICO CON ASPECTOS INTERNOS
+        // MOTOR GRÁFICO
         function dibujarMandalaUniversal(datos) {
             const svg = document.getElementById('canvas-carta');
             svg.innerHTML = '';
@@ -330,7 +347,6 @@
                 { id: 'Marte', deg: datos.Marte.deg, sim: "♂", r: rInt - 75 }
             ];
 
-            // Trazos de los aspectos
             for (let i = 0; i < astros.length; i++) {
                 for (let j = i + 1; j < astros.length; j++) {
                     let diff = Math.abs(astros[i].deg - astros[j].deg);
@@ -361,7 +377,14 @@
             });
         }
 
-        // CONTROLADOR DE CAMBIO DE PANTALLA Y RENDERIZADO
+        // OBTENER LA FECHA ACTUAL FORMATEADA EN ESPAÑOL
+        function obtenerFechaActualFormateada() {
+            const opciones = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const hoy = new Date();
+            return hoy.toLocaleDateString('es-ES', opciones);
+        }
+
+        // CONTROLADOR DE INTERFAZ
         document.getElementById('horoscopo-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const fecha = document.getElementById('fecha').value;
@@ -371,27 +394,33 @@
             const [latStr, lonStr, tzStr, nombreCiudad] = lugarSelect.split(',');
             const datos = calcularEfeméridesNativas(fecha, hora, parseFloat(latStr), parseFloat(lonStr), parseFloat(tzStr));
 
-            // 1. Inyectar datos en la Tríada de la columna izquierda
+            // 1. Datos Tríada Izquierda
             document.getElementById('lbl-solar').innerText = "Sol: " + datos.Sol.nombre;
             document.getElementById('lbl-lunar').innerText = "Luna: " + datos.Luna.nombre;
             document.getElementById('lbl-ascendente').innerText = "Asc: " + datos.Ascendente.nombre;
 
-            // 2. Dibujar la mandala con los trazos internos completos
+            // 2. Renderizar Mandala
             dibujarMandalaUniversal(datos);
 
-            // 3. DESPLIEGUE DEL TEXTO FIJO ANTROPOSÓFICO (Izquierda Abajo)
+            // 3. Imprimir Fecha Actual en el Badge de la Derecha
+            document.getElementById('fecha-actual-badge').innerText = obtenerFechaActualFormateada();
+
+            // 4. Texto Fijo Izquierda Abajo
             document.getElementById('texto-natal-fijo').innerHTML = `
                 Has encarnado bajo la vibración estructural de un <strong>Sol en ${datos.Sol.nombre}</strong> y una <strong>Luna en ${datos.Luna.nombre}</strong>, abriendo tu portal físico a través de un <strong>Ascendente en ${datos.Ascendente.nombre}</strong>.<br><br>
                 Desde la perspectiva antroposófica de Rudolf Steiner, tu mapa geométrico de Casas Iguales revela una distribución simétrica de tus fuerzas anímicas. La relación angular de tus trazos internos (aspectos celestes) muestra el plano arquetípico que tu alma eligió para equilibrar el pensar, el sentir y el actuar en esta encarnación material. Este mapa es tu impronta permanente, el templo desde el cual caminas.
             `;
 
-            // 4. DESPLIEGUE DEL CONSEJO DIARIO DE DOS PÁRRAFOS (Derecha Dinámica)
-            document.getElementById('texto-consejo-diario').innerHTML = `
-                El pulso cósmico del día de hoy activa de forma especial las corrientes sutiles de tu Ascendente en ${datos.Ascendente.nombre}. Las condiciones son propicias para realizar un ejercicio silencioso de mindfulness al amanecer, permitiendo que la claridad del pensar guíe tus decisiones prácticas sin dejarte arrastrar por las prisas del entorno terrestre.<br><br>
-                Integra la fuerza de tu Sol organizando tus intenciones con voluntad amorosa. El trabajo meditativo de estas dos frases te ayudará a enraizar tu energía espiritual en tus tareas cotidianas, irradiando paz hacia quienes te rodean en tu comunidad.
+            // 5. Inyección del Consejo Dividido (Derecha Dinámica)
+            document.getElementById('consejo-vida').innerHTML = `
+                El flujo celeste que rodea tu <strong>Ascendente en ${datos.Ascendente.nombre}</strong> te invita hoy a buscar un espacio de quietud reflexiva en tu intimidad. Es un momento propicio para armonizar tus ritmos orgánicos y suavizar tus interacciones familiares o personales desde la empatía pura. Deja que la calidez del corazón disuelva cualquier tensión acumulada, recordando que el verdadero equilibrio del alma se cultiva en el cuidado amoroso de tus espacios sagrados cotidianos.
             `;
 
-            // 5. TRUCO DE SPA: ESCONDER UNA PANTALLA Y MOSTRAR LA OTRA INMEDIATAMENTE
+            document.getElementById('consejo-laboral').innerHTML = `
+                En tus actividades profesionales, la alineación sutil con tu <strong>Sol en ${datos.Sol.nombre}</strong> te llama a manifestar una voluntad consciente, noble y centrada. Evita dejarte arrastrar por la agitación y las prisas del entorno laboral terrestre; en su lugar, organiza tus tareas con una estructura clara y un propósito elevado. Al interactuar con colegas o proyectos en este día, permite que tu pensar sea un puente de orden y paz, irradiando una colaboración constructiva y amorosa.
+            `;
+
+            // 6. Activar Dashboard SPA
             document.getElementById('pantalla-bienvenida').style.display = 'none';
             document.getElementById('pantalla-dashboard').style.display = 'flex';
         });
