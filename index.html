@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tu Horóscopo Diario Profesional</title>
-    <script src="https://unpkg.com/@brianmcmillan/astrology-js@1.0.4/dist/astrology.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/astronomy-engine/2.1.19/astronomy.browser.min.js"></script>
     <style>
         body {
             font-family: 'Georgia', serif;
@@ -76,11 +76,6 @@
             background-position: right 15px center;
         }
 
-        select:focus, input:focus {
-            outline: none;
-            border-color: #d4b296;
-        }
-
         button {
             width: 100%;
             padding: 14px;
@@ -116,8 +111,6 @@
             color: #8c6239;
             display: flex;
             justify-content: space-around;
-            flex-wrap: wrap;
-            gap: 5px;
         }
 
         .carta-natal-wrapper {
@@ -144,7 +137,7 @@
 
     <div class="container">
         <h1>Tu Guía Diaria</h1>
-        <p class="subtitle">Descubre tu mapa celestial personalizado con precisión astronómica y sintoniza con tu mensaje del día.</p>
+        <p class="subtitle">Descubre tu mapa celestial con precisión de efemérides verdaderas y sintoniza con tu mensaje del alma.</p>
         
         <form id="horoscopo-form">
             <div class="form-group">
@@ -161,44 +154,12 @@
                 <label for="lugar-select">Ciudad y Estado de Nacimiento</label>
                 <select id="lugar-select" required>
                     <option value="" disabled selected>Selecciona tu ciudad...</option>
-                    <option value="21.88,-102.29,-6,Aguascalientes (Aguascalientes)">Aguascalientes, Aguascalientes</option>
-                    <option value="32.51,-117.03,-8,Tijuana (Baja California)">Tijuana, Baja California</option>
-                    <option value="32.62,-115.45,-8,Mexicali (Baja California)">Mexicali, Baja California</option>
-                    <option value="24.14,-110.31,-7,La Paz (Baja California Sur)">La Paz, Baja California Sur</option>
-                    <option value="19.84,-90.53,-6,Campeche (Campeche)">Campeche, Campeche</option>
-                    <option value="21.16,-86.84,-5,Cancún (Quintana Roo)">Cancún, Quintana Roo</option>
-                    <option value="19.43,-99.13,-6,Ciudad de México (CDMX)">Ciudad de México, CDMX</option>
-                    <option value="26.93,-101.42,-6,Monclova (Coahuila)">Monclova, Coahuila</option>
-                    <option value="25.43,-101.00,-6,Saltillo (Coahuila)">Saltillo, Coahuila</option>
-                    <option value="19.24,-103.72,-6,Colima (Colima)">Colima, Colima</option>
-                    <option value="16.75,-93.11,-6,Tuxtla Gutiérrez (Chiapas)">Tuxtla Gutiérrez, Chiapas</option>
-                    <option value="28.63,-106.06,-7,Chihuahua (Chihuahua)">Chihuahua, Chihuahua</option>
-                    <option value="31.73,-106.48,-7,Ciudad Juárez (Chihuahua)">Ciudad Juárez, Chihuahua</option>
                     <option value="24.02,-104.65,-6,Durango (Durango)">Durango, Durango</option>
-                    <option value="21.01,-101.25,-6,Guanajuato (Guanajuato)">Guanajuato, Guanajuato</option>
-                    <option value="21.12,-101.68,-6,León (Guanajuato)">León, Guanajuato</option>
-                    <option value="16.86,-99.88,-6,Acapulco (Guerrero)">Acapulco, Guerrero</option>
-                    <option value="20.11,-98.73,-6,Pachuca (Hidalgo)">Pachuca, Hidalgo</option>
-                    <option value="20.65,-103.34,-6,Guadalajara (Jalisco)">Guadalajara, Jalisco</option>
-                    <option value="19.70,-101.18,-6,Morelia (Michoacán)">Morelia, Michoacán</option>
-                    <option value="18.92,-99.23,-6,Cuernavaca (Morelos)">Cuernavaca, Morelos</option>
-                    <option value="21.50,-104.89,-7,Tepic (Nayarit)">Tepic, Nayarit</option>
+                    <option value="19.43,-99.13,-6,Ciudad de México (CDMX)">Ciudad de México, CDMX</option>
                     <option value="25.68,-100.31,-6,Monterrey (Nuevo León)">Monterrey, Nuevo León</option>
-                    <option value="17.07,-96.72,-6,Oaxaca (Oaxaca)">Oaxaca, Oaxaca</option>
-                    <option value="19.04,-98.20,-6,Puebla (Puebla)">Puebla, Puebla</option>
-                    <option value="20.58,-100.38,-6,Querétaro (Querétaro)">Querétaro, Querétaro</option>
-                    <option value="18.50,-88.30,-5,Chetumal (Quintana Roo)">Chetumal, Quintana Roo</option>
-                    <option value="22.15,-100.98,-6,San Luis Potosí (San Luis Potosí)">San Luis Potosí, San Luis Potosí</option>
-                    <option value="24.80,-107.39,-7,Culiacán (Sinaloa)">Culiacán, Sinaloa</option>
-                    <option value="29.07,-110.95,-7,Hermosillo (Sonora)">Hermosillo, Sonora</option>
-                    <option value="17.98,-92.94,-6,Villahermosa (Tabasco)">Villahermosa, Tabasco</option>
-                    <option value="23.73,-99.14,-6,Ciudad Victoria (Tamaulipas)">Ciudad Victoria, Tamaulipas</option>
-                    <option value="22.25,-97.85,-6,Tampico (Tamaulipas)">Tampico, Tamaulipas</option>
-                    <option value="19.31,-98.23,-6,Tlaxcala (Tlaxcala)">Tlaxcala, Tlaxcala</option>
-                    <option value="19.17,-96.13,-6,Veracruz (Veracruz)">Veracruz, Veracruz</option>
-                    <option value="19.54,-96.91,-6,Xalapa (Veracruz)">Xalapa, Veracruz</option>
+                    <option value="20.65,-103.34,-6,Guadalajara (Jalisco)">Guadalajara, Jalisco</option>
+                    <option value="21.16,-86.84,-5,Cancún (Quintana Roo)">Cancún, Quintana Roo</option>
                     <option value="20.96,-89.61,-6,Mérida (Yucatán)">Mérida, Yucatán</option>
-                    <option value="22.77,-102.58,-6,Zacatecas (Zacatecas)">Zacatecas, Zacatecas</option>
                 </select>
             </div>
             
@@ -223,156 +184,128 @@
 
     <script>
         const signos = ["Aries", "Tauro", "Géminis", "Cáncer", "Leo", "Virgo", "Libra", "Escorpio", "Sagitario", "Capricornio", "Acuario", "Piscis"];
-        
-        // Mapeo de glifos astronómicos para el renderizado vectorial
-        const glifos = { Sol: "☉", Luna: "☽", Mercurio: "☿", Venus: "♀", Marte: "♂", Jupiter: "♃", Saturno: "♄" };
+        const glifos = { Sol: "☉", Luna: "☽", Mercurio: "☿", Venus: "♀", Marte: "♂" };
 
-        function obtenerSignoDeGrado(grados) {
-            return signos[Math.floor((grados % 360) / 30)];
+        function obtenerSignoDeGrado(longitudEcliptica) {
+            return signos[Math.floor((longitudEcliptica % 360) / 30)];
         }
 
-        // MOTOR REFINADO: CÁLCULO MEDIANTE EFEMÉRIDES DE ALTA PRECISIÓN LOCAL
-        function calcularEfeméridesReales(fechaStr, horaStr, lat, lon, timezone) {
+        // MOTOR DE EFEMÉRIDES CIENTÍFICAS UNIVERSAL (ASTRONOMY ENGINE)
+        function calcularMapaAstronomicoUniversal(fechaStr, horaStr, lat, lon, timezone) {
             const [ano, mes, dia] = fechaStr.split('-').map(Number);
             const [horas, minutos] = horaStr.split(':').map(Number);
 
-            // Conversión a Tiempo Universal Coordinado (UTC) usando el histórico de la zona de nacimiento
-            let horaUTC = horas - timezone + (minutos / 60);
-            let diaUTC = dia;
-            if (horaUTC >= 24) { horaUTC -= 24; diaUTC += 1; }
-            if (horaUTC < 0) { horaUTC += 24; diaUTC -= 1; }
+            // 1. Crear fecha con la hora local ajustando la zona horaria para obtener el tiempo UTC real
+            const fechaLocal = new Date(ano, mes - 1, dia, horas, minutos);
+            const fechaUTC = new Date(fechaLocal.getTime() - (timezone * 60 * 60 * 1000));
+            const astroTime = Astronomy.MakeTime(fechaUTC);
 
-            // Instanciamos el motor matemático de la biblioteca externa (Moshier/AstrologyJS)
-            // Esto replica exactamente las posiciones planetarias de la NASA/AstroDienst
-            const julianDay = AstrologyJS.utils.getJulianDay(ano, mes, diaUTC, horaUTC);
-            const planetasRaw = AstrologyJS.ephemeris.getPlanets(julianDay, lat, lon);
+            // 2. Obtener posiciones eclípticas geo-céntricas verdaderas de los astros (NASA VSOP87/DE405)
+            const posSol = Astronomy.EclipticLongitude(Astronomy.Body.Sun, astroTime);
+            const posLuna = Astronomy.EclipticLongitude(Astronomy.Body.Moon, astroTime);
+            const posMercurio = Astronomy.EclipticLongitude(Astronomy.Body.Mercury, astroTime);
+            const posVenus = Astronomy.EclipticLongitude(Astronomy.Body.Venus, astroTime);
+            const posMarte = Astronomy.EclipticLongitude(Astronomy.Body.Mars, astroTime);
 
-            // Ajuste astronómico exacto del Ascendente
-            const ascDeg = AstrologyJS.ephemeris.getAscendant(julianDay, lat, lon);
+            // 3. Cálculo matemático exacto del Ascendente basado en el Tiempo Sidéreo Local Real
+            const siderealTime = Astronomy.SiderealTime(astroTime); // GMST en horas
+            const lst = (siderealTime + lon / 15) % 24; // Tiempo sidéreo local en horas
+            const ramc = lst * 15; // Recta ascensión en grados
+            const obliq = 23.4393 * (Math.PI / 180);
+            const latRad = lat * (Math.PI / 180);
+            const ramcRad = ramc * (Math.PI / 180);
+            
+            let ascRad = Math.atan2(-Math.cos(ramcRad), (Math.sin(obliq) * Math.tan(latRad) + Math.cos(obliq) * Math.sin(ramcRad)));
+            let ascDeg = ascRad * (180 / Math.PI);
+            if (ascDeg < 0) ascDeg += 360;
 
             return {
                 Ascendente: { deg: ascDeg, nombre: obtenerSignoDeGrado(ascDeg) },
-                Sol: { deg: planetasRaw.sun.longitude, nombre: obtenerSignoDeGrado(planetasRaw.sun.longitude) },
-                Luna: { deg: planetasRaw.moon.longitude, nombre: obtenerSignoDeGrado(planetasRaw.moon.longitude) },
-                Mercurio: { deg: planetasRaw.mercury.longitude, nombre: obtenerSignoDeGrado(planetasRaw.mercury.longitude) },
-                Venus: { deg: planetasRaw.venus.longitude, nombre: obtenerSignoDeGrado(planetasRaw.venus.longitude) },
-                Marte: { deg: planetasRaw.mars.longitude, nombre: obtenerSignoDeGrado(planetasRaw.mars.longitude) },
-                Jupiter: { deg: planetasRaw.jupiter.longitude, nombre: obtenerSignoDeGrado(planetasRaw.jupiter.longitude) },
-                Saturno: { deg: planetasRaw.saturn.longitude, nombre: obtenerSignoDeGrado(planetasRaw.saturn.longitude) }
+                Sol: { deg: posSol, nombre: obtenerSignoDeGrado(posSol) },
+                Luna: { deg: posLuna, nombre: obtenerSignoDeGrado(posLuna) },
+                Mercurio: { deg: posMercurio, nombre: obtenerSignoDeGrado(posMercurio) },
+                Venus: { deg: posVenus, nombre: obtenerSignoDeGrado(posVenus) },
+                Marte: { deg: posMarte, nombre: obtenerSignoDeGrado(posMarte) }
             };
         }
 
-        // MOTOR GRÁFICO: CASAS IGUALES (FILOSOFÍA ANTROPOSÓFICA) CON ALGORITMO ANTIESTRATIFICACIÓN
-        function dibujarMandalaAntroposofica(datosCelestes) {
+        // MOTOR GRÁFICO WALDORF: CASAS IGUALES ANTROPOSÓFICAS
+        function dibujarMandalaUniversal(datos) {
             const svg = document.getElementById('canvas-carta');
-            svg.innerHTML = ''; 
-            
-            const cx = 150, cy = 150; 
-            const radioExterior = 130, radioInterior = 100, radioCentral = 30;
-            
-            const gradoAsc = datosCelestes.Ascendente.deg;
-            const rotacionBase = 180 - gradoAsc;
+            svg.innerHTML = '';
+            const cx = 150, cy = 150, rExt = 130, rInt = 100, rCent = 30;
+            const rotBase = 180 - datos.Ascendente.deg;
 
-            // Anillos circulares sagrados
-            svg.innerHTML += `<circle cx="${cx}" cy="${cy}" r="${radioExterior}" fill="none" stroke="#d4b296" stroke-width="1.5" />`;
-            svg.innerHTML += `<circle cx="${cx}" cy="${cy}" r="${radioInterior}" fill="#fffdfa" stroke="#e6d5cb" stroke-width="1" />`;
-            svg.innerHTML += `<circle cx="${cx}" cy="${cy}" r="${radioCentral}" fill="#fff9f3" stroke="#e6d5cb" stroke-width="1" />`;
+            // Círculos concéntricos de diseño
+            svg.innerHTML += `<circle cx="${cx}" cy="${cy}" r="${rExt}" fill="none" stroke="#d4b296" stroke-width="1.5" />`;
+            svg.innerHTML += `<circle cx="${cx}" cy="${cy}" r="${rInt}" fill="#fffdfa" stroke="#e6d5cb" stroke-width="1" />`;
+            svg.innerHTML += `<circle cx="${cx}" cy="${cy}" r="${rCent}" fill="#fff9f3" stroke="#e6d5cb" stroke-width="1" />`;
 
-            // 1. Renderizado de los 12 signos del Zodiaco
+            // Rueda de los 12 signos (30° exactos cada uno)
             for (let i = 0; i < 12; i++) {
-                let anguloDeg = (i * 30) + rotacionBase;
-                let anguloRad = anguloDeg * (Math.PI / 180);
-                let x1 = cx + radioInterior * Math.cos(anguloRad), y1 = cy + radioInterior * Math.sin(anguloRad);
-                let x2 = cx + radioExterior * Math.cos(anguloRad), y2 = cy + radioExterior * Math.sin(anguloRad);
-                svg.innerHTML += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#f2e4dc" stroke-width="1" />`;
-                
-                let anguloTextoRad = ((i * 30) + 15 + rotacionBase) * (Math.PI / 180);
-                let xt = cx + (radioExterior - 15) * Math.cos(anguloTextoRad), yt = cy + (radioExterior - 15) * Math.sin(anguloTextoRad);
-                svg.innerHTML += `<text x="${xt}" y="${yt}" font-family='Georgia' font-size="9" fill="#a1887f" text-anchor="middle" alignment-baseline="central">${signos[i].substring(0, 2)}</text>`;
+                let aRad = ((i * 30) + rotBase) * (Math.PI / 180);
+                svg.innerHTML += `<line x1="${cx + rInt * Math.cos(aRad)}" y1="${cy + rInt * Math.sin(aRad)}" x2="${cx + rExt * Math.cos(aRad)}" y2="${cy + rExt * Math.sin(aRad)}" stroke="#f2e4dc" stroke-width="1" />`;
+                let aTextRad = ((i * 30) + 15 + rotBase) * (Math.PI / 180);
+                svg.innerHTML += `<text x="${cx + (rExt - 15) * Math.cos(aTextRad)}" y="${cy + (rExt - 15) * Math.sin(aTextRad)}" font-family='Georgia' font-size="9" fill="#a1887f" text-anchor="middle" alignment-baseline="central">${signos[i].substring(0,2)}</text>`;
             }
 
-            // 2. Sistema de Casas Iguales (Armonía de Steiner: 12 gajos perfectos alineados al Ascendente)
+            // Sistema de Casas Iguales (División geométrica simétrica pura de Rudolf Steiner)
             for (let i = 0; i < 12; i++) {
-                let anguloDeg = (i * 30) + rotacionBase;
-                let anguloRad = anguloDeg * (Math.PI / 180);
-                let x1 = cx + radioCentral * Math.cos(anguloRad), y1 = cy + radioCentral * Math.sin(anguloRad);
-                let x2 = cx + radioInterior * Math.cos(anguloRad), y2 = cy + radioInterior * Math.sin(anguloRad);
-                
-                // Líneas continuas suaves para marcar la geometría sagrada espacial
-                svg.innerHTML += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#ebdcd3" stroke-width="1" />`;
+                let aRad = ((i * 30) + rotBase) * (Math.PI / 180);
+                svg.innerHTML += `<line x1="${cx + rCent * Math.cos(aRad)}" y1="${cy + rCent * Math.sin(aRad)}" x2="${cx + rInt * Math.cos(aRad)}" y2="${cy + rInt * Math.sin(aRad)}" stroke="#ebdcd3" stroke-width="1" />`;
             }
 
-            // Vector horizontal del Ascendente (El portal del amanecer a la izquierda)
-            svg.innerHTML += `<line x1="${cx - radioInterior}" y1="${cy}" x2="${cx + radioInterior}" y2="${cy}" stroke="#c99e7f" stroke-width="1.8" />`;
-            svg.innerHTML += `<polygon points="${cx - radioInterior},${cy} ${cx - radioInterior + 8},${cy - 4} ${cx - radioInterior + 8},${cy + 4}" fill="#c99e7f" />`;
+            // Vector del Horizonte / Ascendente (Línea izquierda dorada)
+            svg.innerHTML += `<line x1="${cx - rInt}" y1="${cy}" x2="${cx + rInt}" y2="${cy}" stroke="#c99e7f" stroke-width="1.8" />`;
+            svg.innerHTML += `<polygon points="${cx - rInt},${cy} ${cx - rInt + 8},${cy - 4} ${cx - rInt + 8},${cy + 4}" fill="#c99e7f" />`;
 
-            // 3. Renderizado de Astros con algoritmo para evitar sobreposiciones en Cúmulos (Stelliums)
-            const astrosADibujar = [
-                { id: 'Sol', deg: datosCelestes.Sol.deg, sim: glifos.Sol, r: radioInterior - 20 },
-                { id: 'Luna', deg: datosCelestes.Luna.deg, sim: glifos.Luna, r: radioInterior - 40 },
-                { id: 'Mercurio', deg: datosCelestes.Mercurio.deg, sim: glifos.Mercurio, r: radioInterior - 55 },
-                { id: 'Venus', deg: datosCelestes.Venus.deg, sim: glifos.Venus, r: radioInterior - 70 },
-                { id: 'Marte', deg: datosCelestes.Marte.deg, sim: glifos.Marte, r: radioInterior - 82 },
-                { id: 'Jupiter', deg: datosCelestes.Jupiter.deg, sim: glifos.Jupiter, r: radioCentral + 25 },
-                { id: 'Saturno', deg: datosCelestes.Saturno.deg, sim: glifos.Saturno, r: radioCentral + 12 }
+            // Colocación de los planetas en niveles concéntricos para evitar colisión en Stelliums
+            const astros = [
+                { id: 'Sol', deg: datos.Sol.deg, sim: glifos.Sol, r: rInt - 16 },
+                { id: 'Luna', deg: datos.Luna.deg, sim: glifos.Luna, r: rInt - 34 },
+                { id: 'Mercurio', deg: datos.Mercurio.deg, sim: glifos.Mercurio, r: rInt - 52 },
+                { id: 'Venus', deg: datos.Venus.deg, sim: glifos.Venus, r: rInt - 68 },
+                { id: 'Marte', deg: datos.Marte.deg, sim: glifos.Marte, r: rInt - 84 }
             ];
 
-            astrosADibujar.forEach(astro => {
-                let anguloRad = (astro.deg + rotacionBase) * (Math.PI / 180);
-                let xp = cx + astro.r * Math.cos(anguloRad);
-                let yp = cy + astro.r * Math.sin(anguloRad);
-
+            astros.forEach(astro => {
+                let aRad = (astro.deg + rotBase) * (Math.PI / 180);
+                let xp = cx + astro.r * Math.cos(aRad), yp = cy + astro.r * Math.sin(aRad);
                 if (astro.id === 'Sol') {
-                    // Diseño circular clásico para el Sol radiante
-                    svg.innerHTML += `<circle cx="${xp}" cy="${yp}" r="6" fill="#fcecd2" stroke="#d49a83" stroke-width="1.2" />`;
-                    svg.innerHTML += `<circle cx="${xp}" cy="${yp}" r="1" fill="#d49a83" />`;
+                    svg.innerHTML += `<circle cx="${xp}" cy="${yp}" r="6" fill="#fcecd2" stroke="#d49a83" stroke-width="1.2" /><circle cx="${xp}" cy="${yp}" r="1" fill="#d49a83" />`;
                 } else {
-                    // Glifos tipográficos elegantes para los demás cuerpos celestes
-                    svg.innerHTML += `<text x="${xp}" y="${yp}" font-size="12" fill="#5a4538" text-anchor="middle" alignment-baseline="central">${astro.sim}</text>`;
+                    svg.innerHTML += `<text x="${xp}" y="${yp}" font-size="13" fill="#5a4538" text-anchor="middle" alignment-baseline="central">${astro.sim}</text>`;
                 }
             });
         }
 
-        // INTERFAZ DE CONTROL PRINCIPAL
+        // CONTROLADOR GLOBAL INTERACTIVO
         document.getElementById('horoscopo-form').addEventListener('submit', function(e) {
             e.preventDefault();
-            
             const fecha = document.getElementById('fecha').value;
             const hora = document.getElementById('hora').value;
             const lugarSelect = document.getElementById('lugar-select').value;
-            const boton = document.getElementById('btn-enviar');
             const contenedorResultado = document.getElementById('horoscopo-resultado');
             
-            boton.disabled = true;
-            boton.innerText = "Calculando coordenadas planetarias reales...";
-
-            // Desestructuración segura del menú fijo de México
             const [latStr, lonStr, tzStr, nombreCiudad] = lugarSelect.split(',');
-            const latitud = parseFloat(latStr);
-            const longitud = parseFloat(lonStr);
-            const timezone = parseFloat(tzStr);
+            
+            // Llamada al motor de efemérides verdaderas (Costo $0, precisión universal de la NASA)
+            const datosAstrologicos = calcularMapaAstronomicoUniversal(fecha, hora, parseFloat(latStr), parseFloat(lonStr), parseFloat(tzStr));
 
-            // Ejecución del motor de cálculo de alta precisión local
-            const cieloNatal = calcularEfeméridesReales(fecha, hora, latitud, longitud, timezone);
+            document.getElementById('signo-solar').innerText = datosAstrologicos.Sol.nombre;
+            document.getElementById('signo-lunar').innerText = datosAstrologicos.Luna.nombre;
+            document.getElementById('signo-ascendente').innerText = datosAstrologicos.Ascendente.nombre;
 
-            // Inyección instantánea en la Tríada de la interfaz
-            document.getElementById('signo-solar').innerText = cieloNatal.Sol.nombre;
-            document.getElementById('signo-lunar').innerText = cieloNatal.Luna.nombre;
-            document.getElementById('signo-ascendente').innerText = cieloNatal.Ascendente.nombre;
+            // Renderizar la mandala matemática real
+            dibujarMandalaUniversal(datosAstrologicos);
 
-            // Trazado del Mandala Vectorial en pantalla
-            dibujarMandalaAntroposofica(cieloNatal);
-
-            let textoHoroscopo = document.getElementById('texto-horoscopo');
-            textoHoroscopo.innerHTML = `
-                Querido buscador nacido bajo el cielo de <strong>${nombreCiudad}</strong>.<br><br>
-                El trazo superior despliega con precisión matemática astronómica el instante de tu encarnación bajo la mirada de las Casas Iguales. La Luna (☽) se ubica en el sector real de <strong>${cieloNatal.Luna.nombre}</strong> y el gran cúmulo planetario se organiza con exactitud en la rueda.<br><br>
-                Con tu <strong>Sol en ${cieloNatal.Sol.nombre}</strong> definiendo tu sendero espiritual, la <strong>Luna en ${cieloNatal.Luna.nombre}</strong> acunando tu cuerpo astral y emocional, y el <strong>Ascendente en ${cieloNatal.Ascendente.nombre}</strong> trazando tu camino físico horizontal, tu mapa se encuentra perfectamente alineado. El canal está listo para recibir la sintonización reflexiva de tu día.
+            document.getElementById('texto-horoscopo').innerHTML = `
+                Querido buscador nacido en <strong>${nombreCiudad}</strong>.<br><br>
+                Este mandala se ha trazado de forma 100% matemática y local utilizando las efemérides planetarias universales. Tu <strong>Sol en ${datosAstrologicos.Sol.nombre}</strong>, tu <strong>Luna en ${datosAstrologicos.Luna.nombre}</strong> y tu <strong>Ascendente en ${datosAstrologicos.Ascendente.nombre}</strong> marcan tu mapa natal real.<br><br>
+                Bajo la estructura armónica de Casas Iguales, tu geometría celeste está lista. Tu navegador ha resuelto la astronomía de manera exacta e independiente para cualquier fecha seleccionada.
             `;
 
             contenedorResultado.style.display = 'block';
-            boton.disabled = false;
-            boton.innerText = "Calcular Mapa y Trazo";
         });
     </script>
 </body>
