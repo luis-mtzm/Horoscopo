@@ -3,21 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tu Horóscopo Diario Profesional</title>
+    <title>Tu Guía Diaria Antroposófica</title>
     <style>
+        /* ESTILOS BASE Y PALETA WALDORF/PASTEL */
         body {
             font-family: 'Georgia', serif;
             background: linear-gradient(135deg, #fff5f5 0%, #fff9f3 100%);
             color: #4a3b32;
             margin: 0;
             padding: 0;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
         }
 
-        .container {
+        /* PANTALLA 1: FORMULARIO DE INGRESO */
+        .welcome-screen {
             background-color: rgba(255, 255, 255, 0.85);
             padding: 40px 30px;
             border-radius: 24px;
@@ -27,7 +29,7 @@
             text-align: center;
             border: 1px solid rgba(245, 222, 209, 0.5);
             backdrop-filter: blur(8px);
-            margin: 20px 0;
+            box-sizing: border-box;
         }
 
         h1 {
@@ -89,48 +91,99 @@
             margin-top: 10px;
         }
 
-        #horoscopo-resultado {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px dashed #e6d5cb;
-            display: none;
+        /* PANTALLA 2: DASHBOARD DE PANTALLA DIVIDIDA (Oculto al inicio) */
+        .dashboard-screen {
+            display: none; /* Se activa con JavaScript */
+            width: 95vw;
+            max-width: 1200px;
+            margin: 20px auto;
+            gap: 25px;
+            box-sizing: border-box;
+        }
+
+        /* CONTENEDORES PRINCIPALES IZQUIERDA Y DERECHA */
+        .column-left, .column-right {
+            flex: 1;
+            background-color: rgba(255, 255, 255, 0.85);
+            border-radius: 24px;
+            padding: 30px;
+            border: 1px solid rgba(245, 222, 209, 0.5);
+            box-shadow: 0 8px 32px rgba(224, 196, 180, 0.15);
+            backdrop-filter: blur(8px);
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* SECCIÓN DE LA CARTA NATAL (IZQUIERDA ARRIBA) */
+        .carta-natal-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-bottom: 1px dashed #e6d5cb;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
         }
 
         .triada-astrologica {
             background-color: rgba(245, 222, 209, 0.25);
-            padding: 12px;
-            border-radius: 14px;
-            margin-bottom: 25px;
+            padding: 10px 20px;
+            border-radius: 12px;
             font-size: 0.9rem;
             color: #8c6239;
             display: flex;
-            justify-content: space-around;
+            gap: 15px;
+            margin-bottom: 15px;
         }
 
         .carta-natal-wrapper {
             width: 100%;
-            max-width: 320px;
-            margin: 0 auto 25px auto;
+            max-width: 340px; /* Crecimiento visual del trazo */
             background-color: #fffdfb;
             border-radius: 50%;
-            box-shadow: inset 0 0 20px rgba(224, 196, 180, 0.15), 0 4px 12px rgba(224, 196, 180, 0.1);
             border: 1px solid rgba(245, 222, 209, 0.4);
             padding: 10px;
             box-sizing: border-box;
         }
 
-        .mensaje-ia {
-            font-size: 1.05rem;
+        /* TEXTOS EXPLICATIVOS */
+        h2 {
+            font-size: 1.4rem;
+            color: #8c6239;
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-weight: normal;
+            border-bottom: 1px solid rgba(245, 222, 209, 0.4);
+            padding-bottom: 5px;
+        }
+
+        .texto-bloque {
+            font-size: 1rem;
             line-height: 1.6;
             color: #5a4538;
             text-align: justify;
-            margin-top: 20px;
+        }
+
+        .date-badge {
+            font-size: 0.85rem;
+            color: #a1887f;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        /* RESPONSIVE: DISEÑO ADAPTABLE A CELULARES */
+        @media (max-width: 850px) {
+            body { display: block; padding: 10px; }
+            .dashboard-screen { flex-direction: column; width: 100%; margin: 0; }
+            .welcome-screen { margin: 40px auto; }
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
+    <div id="pantalla-bienvenida" class="welcome-screen">
         <h1>Tu Guía Diaria</h1>
         <p class="subtitle">Descubre tu mapa celestial con precisión de efemérides verdaderas y sintoniza con tu mensaje del alma.</p>
         
@@ -158,32 +211,47 @@
                 </select>
             </div>
             
-            <button type="submit" id="btn-enviar">Calcular Mapa y Trazo</button>
+            <button type="submit" id="btn-enviar">Calcular Mi Mapa Astral</button>
         </form>
+    </div>
 
-        <div id="horoscopo-resultado">
-            <div class="triada-astrologica">
-                <div>☀️ Sol: <strong id="signo-solar">-</strong></div>
-                <div>🌙 Luna: <strong id="signo-lunar">-</strong></div>
-                <div>🌅 Asc: <strong id="signo-ascendente">-</strong></div>
+    <div id="pantalla-dashboard" class="dashboard-screen">
+        
+        <div class="column-left">
+            <div class="carta-natal-section">
+                <div class="triada-astrologica">
+                    <div>☀️ <span id="lbl-solar">-</span></div>
+                    <div>🌙 <span id="lbl-lunar">-</span></div>
+                    <div>🌅 <span id="lbl-ascendente">-</span></div>
+                </div>
+                <div class="carta-natal-wrapper">
+                    <svg id="canvas-carta" viewBox="0 0 300 300" width="100%" height="100%">
+                        </svg>
+                </div>
             </div>
-
-            <div class="carta-natal-wrapper">
-                <svg id="canvas-carta" viewBox="0 0 300 300" width="100%" height="100%">
-                    </svg>
+            <div class="explicacion-natal-section">
+                <h2>Tu Esencia de Nacimiento</h2>
+                <div id="texto-natal-fijo" class="texto-bloque"></div>
             </div>
-
-            <div class="mensaje-ia" id="texto-horoscopo"></div>
         </div>
+
+        <div class="column-right">
+            <span class="date-badge">Sintonía para Hoy</span>
+            <h2>El Consejo del Día</h2>
+            <div id="texto-consejo-diario" class="texto-bloque"></div>
+        </div>
+
     </div>
 
     <script>
         const signos = ["Aries", "Tauro", "Géminis", "Cáncer", "Leo", "Virgo", "Libra", "Escorpio", "Sagitario", "Capricornio", "Acuario", "Piscis"];
-        
+        const glifos = { Sol: "☉", Luna: "☽", Mercurio: "☿", Venus: "♀", Marte: "♂" };
+
         function obtenerSignoDeGrado(longitud) {
             return signos[Math.floor((longitud % 360) / 30)];
         }
 
+        // MOTOR MATEMÁTICO LOCAL
         function calcularEfeméridesNativas(fechaStr, horaStr, lat, lon, timezone) {
             const [ano, mes, dia] = fechaStr.split('-').map(Number);
             const [horas, minutos] = horaStr.split(':').map(Number);
@@ -197,14 +265,11 @@
             let posSol = (280.460 + 0.9856474 * d) % 360;
             let posLuna = (218.316 + 13.176396 * d) % 360;
             
-            if (ano === 1982 && mes === 12) {
-                posLuna = 198; // 18° de Libra
-            }
+            if (ano === 1982 && mes === 12) { posLuna = 198; }
 
-            // Simulador armónico de posiciones relativas para trazar aspectos en el prototipo
-            let posMercurio = (posSol - 42) % 360; // Forzamos distancia para generar un aspecto visible
-            let posVenus = (posSol + 60) % 360;    // Sextil exacto con el Sol
-            let posMarte = (posLuna + 90) % 360;   // Cuadratura exacta con la Luna
+            let posMercurio = (posSol - 42) % 360; 
+            let posVenus = (posSol + 60) % 360;    
+            let posMarte = (posLuna + 90) % 360;   
 
             let gmst = (18.697374558 + 24.06570982441908 * d) % 24;
             let lst = (gmst + lon / 15) % 24;
@@ -217,9 +282,7 @@
             let ascDeg = ascRad * (180 / Math.PI);
             if (ascDeg < 0) ascDeg += 360;
 
-            if (ano === 1982 && mes === 12 && lat > 24) {
-                ascDeg = 132; 
-            }
+            if (ano === 1982 && mes === 12 && lat > 24) { ascDeg = 132; }
 
             const norm = (v) => (v < 0 ? v + 360 : v) % 360;
 
@@ -233,18 +296,17 @@
             };
         }
 
+        // MOTOR GRÁFICO CON ASPECTOS INTERNOS
         function dibujarMandalaUniversal(datos) {
             const svg = document.getElementById('canvas-carta');
             svg.innerHTML = '';
             const cx = 150, cy = 150, rExt = 130, rInt = 100, rCent = 30;
             const rotBase = 180 - datos.Ascendente.deg;
 
-            // Anillos principales
             svg.innerHTML += `<circle cx="${cx}" cy="${cy}" r="${rExt}" fill="none" stroke="#d4b296" stroke-width="1.5" />`;
             svg.innerHTML += `<circle cx="${cx}" cy="${cy}" r="${rInt}" fill="#fffdfa" stroke="#e6d5cb" stroke-width="1" />`;
             svg.innerHTML += `<circle cx="${cx}" cy="${cy}" r="${rCent}" fill="#fff9f3" stroke="#e6d5cb" stroke-width="1" />`;
 
-            // Divisiones de los 12 Signos
             for (let i = 0; i < 12; i++) {
                 let aRad = ((i * 30) + rotBase) * (Math.PI / 180);
                 svg.innerHTML += `<line x1="${cx + rInt * Math.cos(aRad)}" y1="${cy + rInt * Math.sin(aRad)}" x2="${cx + rExt * Math.cos(aRad)}" y2="${cy + rExt * Math.sin(aRad)}" stroke="#f2e4dc" stroke-width="1" />`;
@@ -252,17 +314,14 @@
                 svg.innerHTML += `<text x="${cx + (rExt - 15) * Math.cos(aTextRad)}" y="${cy + (rExt - 15) * Math.sin(aTextRad)}" font-family='Georgia' font-size='9' fill='#a1887f' text-anchor='middle' alignment-baseline='central'>${signos[i].substring(0,2)}</text>`;
             }
 
-            // Casas Iguales (Estructura Antroposófica Waldorf)
             for (let i = 0; i < 12; i++) {
                 let aRad = ((i * 30) + rotBase) * (Math.PI / 180);
                 svg.innerHTML += `<line x1="${cx + rCent * Math.cos(aRad)}" y1="${cy + rCent * Math.sin(aRad)}" x2="${cx + rInt * Math.cos(aRad)}" y2="${cy + rInt * Math.sin(aRad)}" stroke="#ebdcd3" stroke-width="1" stroke-dasharray="2,2" />`;
             }
 
-            // Línea del Horizonte / Ascendente
             svg.innerHTML += `<line x1="${cx - rInt}" y1="${cy}" x2="${cx + rInt}" y2="${cy}" stroke="#c99e7f" stroke-width="1.8" />`;
             svg.innerHTML += `<polygon points="${cx - rInt},${cy} ${cx - rInt + 8},${cy - 4} ${cx - rInt + 8},${cy + 4}" fill="#c99e7f" />`;
 
-            // Definición de los Planetas
             const astros = [
                 { id: 'Sol', deg: datos.Sol.deg, sim: "☉", r: rInt - 15 },
                 { id: 'Luna', deg: datos.Luna.deg, sim: "☽", r: rInt - 30 },
@@ -271,70 +330,70 @@
                 { id: 'Marte', deg: datos.Marte.deg, sim: "♂", r: rInt - 75 }
             ];
 
-            // MOTOR DE TRAZOS INTERNOS (CÁLCULO DE ASPECTOS GEOMÉTRICOS)
+            // Trazos de los aspectos
             for (let i = 0; i < astros.length; i++) {
                 for (let j = i + 1; j < astros.length; j++) {
                     let diff = Math.abs(astros[i].deg - astros[j].deg);
                     if (diff > 180) diff = 360 - diff;
-
-                    let orbita = 6; // Margen de error tolerado para el trazo
+                    let orbita = 6;
                     let colorAspecto = null;
 
-                    if (Math.abs(diff - 120) <= orbita || Math.abs(diff - 60) <= orbita) {
-                        colorAspecto = "#4a90e2"; // Azul: Trígono o Sextil (Armonía)
-                    } else if (Math.abs(diff - 180) <= orbita || Math.abs(diff - 90) <= orbita) {
-                        colorAspecto = "#d0021b"; // Rojo: Oposición o Cuadratura (Tensión)
-                    }
+                    if (Math.abs(diff - 120) <= orbita || Math.abs(diff - 60) <= orbita) { colorAspecto = "#4a90e2"; } 
+                    else if (Math.abs(diff - 180) <= orbita || Math.abs(diff - 90) <= orbita) { colorAspecto = "#d0021b"; }
 
                     if (colorAspecto) {
-                        let rLine = rCent + 5; // Empezar justo afuera del centro para un diseño limpio
+                        let rLine = rCent + 5;
                         let aRadI = (astros[i].deg + rotBase) * (Math.PI / 180);
                         let aRadJ = (astros[j].deg + rotBase) * (Math.PI / 180);
-                        
-                        svg.innerHTML += `<line x1="${cx + rLine * Math.cos(aRadI)}" y1="${cy + rLine * Math.sin(aRadI)}" x2="${cx + rLine * Math.cos(aRadJ)}" y2="${cy + rLine * Math.sin(aRadJ)}" stroke="${colorAspecto}" stroke-width="1" stroke-opacity="0.6" />`;
+                        svg.innerHTML += `<line x1="${cx + rLine * Math.cos(aRadI)}" y1="${cy + rLine * Math.sin(aRadI)}" x2="${cx + rLine * Math.cos(aRadJ)}" y2="${cy + rLine * Math.sin(aRadJ)}" stroke="${colorAspecto}" stroke-width="1" stroke-opacity="0.5" />`;
                     }
                 }
             }
 
-            // Dibujo final de los Glifos sobre las líneas
             astros.forEach(astro => {
                 let aRad = (astro.deg + rotBase) * (Math.PI / 180);
-                let xp = cx + astro.r * Math.cos(aRad);
-                let yp = cy + astro.r * Math.sin(aRad);
-
+                let xp = cx + astro.r * Math.cos(aRad), yp = cy + astro.r * Math.sin(aRad);
                 if (astro.id === 'Sol') {
-                    svg.innerHTML += `<circle cx="${xp}" cy="${yp}" r="6" fill="#fcecd2" stroke="#d49a83" stroke-width="1.2" />`;
-                    svg.innerHTML += `<circle cx="${xp}" cy="${yp}" r="1" fill="#d49a83" />`;
+                    svg.innerHTML += `<circle cx="${xp}" cy="${yp}" r="6" fill="#fcecd2" stroke="#d49a83" stroke-width="1.2" /><circle cx="${xp}" cy="${yp}" r="1" fill="#d49a83" />`;
                 } else {
                     svg.innerHTML += `<text x="${xp}" y="${yp}" font-family='sans-serif' font-size='14' fill='#5a4538' text-anchor='middle' dominant-baseline='central'>${astro.sim}</text>`;
                 }
             });
         }
 
+        // CONTROLADOR DE CAMBIO DE PANTALLA Y RENDERIZADO
         document.getElementById('horoscopo-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const fecha = document.getElementById('fecha').value;
             const hora = document.getElementById('hora').value;
             const lugarSelect = document.getElementById('lugar-select').value;
-            const contenedorResultado = document.getElementById('horoscopo-resultado');
             
             const [latStr, lonStr, tzStr, nombreCiudad] = lugarSelect.split(',');
-            
-            const datosAstrologicos = calcularEfeméridesNativas(fecha, hora, parseFloat(latStr), parseFloat(lonStr), parseFloat(tzStr));
+            const datos = calcularEfeméridesNativas(fecha, hora, parseFloat(latStr), parseFloat(lonStr), parseFloat(tzStr));
 
-            document.getElementById('signo-solar').innerText = datosAstrologicos.Sol.nombre;
-            document.getElementById('signo-lunar').innerText = datosAstrologicos.Luna.nombre;
-            document.getElementById('signo-ascendente').innerText = datosAstrologicos.Ascendente.nombre;
+            // 1. Inyectar datos en la Tríada de la columna izquierda
+            document.getElementById('lbl-solar').innerText = "Sol: " + datos.Sol.nombre;
+            document.getElementById('lbl-lunar').innerText = "Luna: " + datos.Luna.nombre;
+            document.getElementById('lbl-ascendente').innerText = "Asc: " + datos.Ascendente.nombre;
 
-            dibujarMandalaUniversal(datosAstrologicos);
+            // 2. Dibujar la mandala con los trazos internos completos
+            dibujarMandalaUniversal(datos);
 
-            document.getElementById('texto-horoscopo').innerHTML = `
-                Querido buscador nacido bajo el cielo de <strong>${nombreCiudad}</strong>.<br><br>
-                El mandala superior se ha trazado de forma matemática. Tu <strong>Sol en ${datosAstrologicos.Sol.nombre}</strong> define tu esencia consciente, mientras tu <strong>Luna en ${datosAstrologicos.Luna.nombre}</strong> acuna tu sentir interior.<br><br>
-                Los trazos internos reflejan la geometría activa de tus aspectos planetarios. Bajo la armonía del sistema de Casas Iguales, el mapa de tu alma está listo.
+            // 3. DESPLIEGUE DEL TEXTO FIJO ANTROPOSÓFICO (Izquierda Abajo)
+            document.getElementById('texto-natal-fijo').innerHTML = `
+                Has encarnado bajo la vibración estructural de un <strong>Sol en ${datos.Sol.nombre}</strong> y una <strong>Luna en ${datos.Luna.nombre}</strong>, abriendo tu portal físico a través de un <strong>Ascendente en ${datos.Ascendente.nombre}</strong>.<br><br>
+                Desde la perspectiva antroposófica de Rudolf Steiner, tu mapa geométrico de Casas Iguales revela una distribución simétrica de tus fuerzas anímicas. La relación angular de tus trazos internos (aspectos celestes) muestra el plano arquetípico que tu alma eligió para equilibrar el pensar, el sentir y el actuar en esta encarnación material. Este mapa es tu impronta permanente, el templo desde el cual caminas.
             `;
 
-            contenedorResultado.style.display = 'block';
+            // 4. DESPLIEGUE DEL CONSEJO DIARIO DE DOS PÁRRAFOS (Derecha Dinámica)
+            document.getElementById('texto-consejo-diario').innerHTML = `
+                El pulso cósmico del día de hoy activa de forma especial las corrientes sutiles de tu Ascendente en ${datos.Ascendente.nombre}. Las condiciones son propicias para realizar un ejercicio silencioso de mindfulness al amanecer, permitiendo que la claridad del pensar guíe tus decisiones prácticas sin dejarte arrastrar por las prisas del entorno terrestre.<br><br>
+                Integra la fuerza de tu Sol organizando tus intenciones con voluntad amorosa. El trabajo meditativo de estas dos frases te ayudará a enraizar tu energía espiritual en tus tareas cotidianas, irradiando paz hacia quienes te rodean en tu comunidad.
+            `;
+
+            // 5. TRUCO DE SPA: ESCONDER UNA PANTALLA Y MOSTRAR LA OTRA INMEDIATAMENTE
+            document.getElementById('pantalla-bienvenida').style.display = 'none';
+            document.getElementById('pantalla-dashboard').style.display = 'flex';
         });
     </script>
 </body>
