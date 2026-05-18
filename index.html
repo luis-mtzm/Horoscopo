@@ -59,7 +59,8 @@
             letter-spacing: 1px;
         }
 
-        input {
+        /* Estilo elegante para el menú de selección */
+        select, input {
             width: 100%;
             padding: 12px;
             border: 1px solid #e6d5cb;
@@ -69,6 +70,15 @@
             color: #4a3b32;
             background-color: #fffdfc;
             box-sizing: border-box;
+            appearance: none; /* Quita el diseño por defecto del navegador */
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='%238c6239'><path d='M0 0l5 6 5-6z'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #d4b296;
         }
 
         button {
@@ -108,7 +118,6 @@
             justify-content: space-around;
         }
 
-        /* Contenedor del lienzo de la Carta Natal */
         .carta-natal-wrapper {
             width: 100%;
             max-width: 320px;
@@ -146,9 +155,50 @@
                 <input type="time" id="hora" required>
             </div>
 
+            <!-- NUEVO MENÚ DESPLEGABLE DE CIUDADES FIJAS (MÉXICO) -->
             <div class="form-group">
-                <label for="lugar">Ciudad de Nacimiento</label>
-                <input type="text" id="lugar" placeholder="Ej. Monterrey, Mexico" required>
+                <label for="lugar-select">Ciudad y Estado de Nacimiento</label>
+                <select id="lugar-select" required>
+                    <option value="" disabled selected>Selecciona tu ciudad...</option>
+                    <option value="21.88,-102.29,Aguascalientes (Aguascalientes)">Aguascalientes, Aguascalientes</option>
+                    <option value="32.51,-117.03,Tijuana (Baja California)">Tijuana, Baja California</option>
+                    <option value="32.62,-115.45,Mexicali (Baja California)">Mexicali, Baja California</option>
+                    <option value="24.14,-110.31,La Paz (Baja California Sur)">La Paz, Baja California Sur</option>
+                    <option value="19.84,-90.53,Campeche (Campeche)">Campeche, Campeche</option>
+                    <option value="21.16,-86.84,Cancún (Quintana Roo)">Cancún, Quintana Roo</option>
+                    <option value="19.43,-99.13,Ciudad de México (CDMX)">Ciudad de México, CDMX</option>
+                    <option value="26.93,-101.42,Monclova (Coahuila)">Monclova, Coahuila</option>
+                    <option value="25.43,-101.00,Saltillo (Coahuila)">Saltillo, Coahuila</option>
+                    <option value="19.24,-103.72,Colima (Colima)">Colima, Colima</option>
+                    <option value="16.75,-93.11,Tuxtla Gutiérrez (Chiapas)">Tuxtla Gutiérrez, Chiapas</option>
+                    <option value="28.63,-106.06,Chihuahua (Chihuahua)">Chihuahua, Chihuahua</option>
+                    <option value="31.73,-106.48,Ciudad Juárez (Chihuahua)">Ciudad Juárez, Chihuahua</option>
+                    <option value="24.02,-104.65,Durango (Durango)">Durango, Durango</option>
+                    <option value="21.01,-101.25,Guanajuato (Guanajuato)">Guanajuato, Guanajuato</option>
+                    <option value="21.12,-101.68,León (Guanajuato)">León, Guanajuato</option>
+                    <option value="16.86,-99.88,Acapulco (Guerrero)">Acapulco, Guerrero</option>
+                    <option value="20.11,-98.73,Pachuca (Hidalgo)">Pachuca, Hidalgo</option>
+                    <option value="20.65,-103.34,Guadalajara (Jalisco)">Guadalajara, Jalisco</option>
+                    <option value="19.70,-101.18,Morelia (Michoacán)">Morelia, Michoacán</option>
+                    <option value="18.92,-99.23,Cuernavaca (Morelos)">Cuernavaca, Morelos</option>
+                    <option value="21.50,-104.89,Tepic (Nayarit)">Tepic, Nayarit</option>
+                    <option value="25.68,-100.31,Monterrey (Nuevo León)">Monterrey, Nuevo León</option>
+                    <option value="17.07,-96.72,Oaxaca (Oaxaca)">Oaxaca, Oaxaca</option>
+                    <option value="19.04,-98.20,Puebla (Puebla)">Puebla, Puebla</option>
+                    <option value="20.58,-100.38,Querétaro (Querétaro)">Querétaro, Querétaro</option>
+                    <option value="18.50,-88.30,Chetumal (Quintana Roo)">Chetumal, Quintana Roo</option>
+                    <option value="22.15,-100.98,San Luis Potosí (San Luis Potosí)">San Luis Potosí, San Luis Potosí</option>
+                    <option value="24.80,-107.39,Culiacán (Sinaloa)">Culiacán, Sinaloa</option>
+                    <option value="29.07,-110.95,Hermosillo (Sonora)">Hermosillo, Sonora</option>
+                    <option value="17.98,-92.94,Villahermosa (Tabasco)">Villahermosa, Tabasco</option>
+                    <option value="23.73,-99.14,Ciudad Victoria (Tamaulipas)">Ciudad Victoria, Tamaulipas</option>
+                    <option value="22.25,-97.85,Tampico (Tamaulipas)">Tampico, Tamaulipas</option>
+                    <option value="19.31,-98.23,Tlaxcala (Tlaxcala)">Tlaxcala, Tlaxcala</option>
+                    <option value="19.17,-96.13,Veracruz (Veracruz)">Veracruz, Veracruz</option>
+                    <option value="19.54,-96.91,Xalapa (Veracruz)">Xalapa, Veracruz</option>
+                    <option value="20.96,-89.61,Mérida (Yucatán)">Mérida, Yucatán</option>
+                    <option value="22.77,-102.58,Zacatecas (Zacatecas)">Zacatecas, Zacatecas</option>
+                </select>
             </div>
             
             <button type="submit" id="btn-enviar">Calcular Mapa y Trazo</button>
@@ -160,7 +210,6 @@
                 <div>🌅 Ascendente: <strong id="signo-ascendente">-</strong></div>
             </div>
 
-            <!-- LIENZO VECTORIAL DONDE SE DIBUJA LA CARTA DIÁMICAMENTE -->
             <div class="carta-natal-wrapper">
                 <svg id="canvas-carta" viewBox="0 0 300 300" width="100%" height="100%">
                     <!-- El código dinámico de JavaScript pintará las líneas aquí -->
@@ -174,7 +223,6 @@
     <script>
         const signos = ["Aries", "Tauro", "Géminis", "Cáncer", "Leo", "Virgo", "Libra", "Escorpio", "Sagitario", "Capricornio", "Acuario", "Piscis"];
 
-        // 1. MOTORES DE CÁLCULO ASTRONÓMICO PROFESIONAL
         function calcularSignoSolarPreciso(dia, mes) {
             const cortes = [20, 19, 20, 20, 21, 21, 22, 23, 23, 23, 22, 22];
             const indice = (dia < cortes[mes - 1]) ? mes - 2 : mes - 1;
@@ -185,7 +233,7 @@
             const [ano, mes, dia] = fechaStr.split('-').map(Number);
             const [horas, minutos] = horaStr.split(':').map(Number);
 
-            const d = (Date.UTC(ano, mes - 1, dia, horas, minutes = 0) - Date.UTC(2000, 0, 1, 12, 0)) / 86400000;
+            const d = (Date.UTC(ano, mes - 1, dia, horas, minutos) - Date.UTC(2000, 0, 1, 12, 0)) / 86400000;
             let gmst = 18.697374558 + 24.06570982441908 * d;
             gmst = gmst % 24; if (gmst < 0) gmst += 24;
 
@@ -204,25 +252,20 @@
             return { nombre: signos[indiceSigno], gradoAbsoluto: ascDeg };
         }
 
-        // 2. MOTOR GRÁFICO (DIBUJAR EL TRAZO ANTROPOSÓFICO)
         function dibujarCartaNatal(gradoSol, gradoAsc) {
             const svg = document.getElementById('canvas-carta');
-            svg.innerHTML = ''; // Limpiamos trazos anteriores
+            svg.innerHTML = ''; 
             
-            const cx = 150, cy = 150; // Centro del círculo
+            const cx = 150, cy = 150; 
             const radioExterior = 130;
             const radioInterior = 100;
             const radioCentral = 30;
-
-            // Rotamos el gráfico completo para que el Ascendente quede exactamente a la izquierda (Oeste visual, regla astrológica)
             const rotacionBase = 180 - gradoAsc;
 
-            // Círculos concéntricos principales (Estilo Waldorf/Suave)
             svg.innerHTML += `<circle cx="${cx}" cy="${cy}" r="${radioExterior}" fill="none" stroke="#d4b296" stroke-width="1.5" />`;
             svg.innerHTML += `<circle cx="${cx}" cy="${cy}" r="${radioInterior}" fill="#fffdfa" stroke="#e6d5cb" stroke-width="1" />`;
             svg.innerHTML += `<circle cx="${cx}" cy="${cy}" r="${radioCentral}" fill="#fff9f3" stroke="#e6d5cb" stroke-width="1" />`;
 
-            // Trazamos las 12 divisiones de los signos (Cada 30 grados)
             for (let i = 0; i < 12; i++) {
                 let anguloDeg = (i * 30) + rotacionBase;
                 let anguloRad = anguloDeg * (Math.PI / 180);
@@ -232,10 +275,8 @@
                 let x2 = cx + radioExterior * Math.cos(anguloRad);
                 let y2 = cy + radioExterior * Math.sin(anguloRad);
                 
-                // Líneas divisorias suaves
                 svg.innerHTML += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#f2e4dc" stroke-width="1" />`;
                 
-                // Iniciales de los signos en la rueda exterior
                 let anguloTextoRad = ((i * 30) + 15 + rotacionBase) * (Math.PI / 180);
                 let xt = cx + (radioExterior - 15) * Math.cos(anguloTextoRad);
                 let yt = cy + (radioExterior - 15) * Math.sin(anguloTextoRad);
@@ -243,9 +284,8 @@
                 svg.innerHTML += `<text x="${xt}" y="${yt}" font-family='Georgia' font-size="9" fill="#a1887f" text-anchor="middle" alignment-baseline="central">${letraSigno}</text>`;
             }
 
-            // Trazamos las 12 Casas Astrológicas (Líneas desde el centro hasta el círculo interior)
             for (let i = 0; i < 12; i++) {
-                let anguloRad = (i * 30) * (Math.PI / 180); // Ejes relativos al Ascendente
+                let anguloRad = (i * 30) * (Math.PI / 180); 
                 let x1 = cx + radioCentral * Math.cos(anguloRad);
                 let y1 = cy + radioCentral * Math.sin(anguloRad);
                 let x2 = cx + radioInterior * Math.cos(anguloRad);
@@ -253,77 +293,55 @@
                 svg.innerHTML += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#ebdcd3" stroke-width="1" stroke-dasharray="2,2" />`;
             }
 
-            // DIBUJAR LA LÍNEA DEL ASCENDENTE (Flecha dorada horizontal a la izquierda)
             svg.innerHTML += `<line x1="${cx - radioInterior}" y1="${cy}" x2="${cx + radioInterior}" y2="${cy}" stroke="#c99e7f" stroke-width="2" />`;
             svg.innerHTML += `<polygon points="${cx - radioInterior},${cy} ${cx - radioInterior + 8},${cy - 4} ${cx - radioInterior + 8},${cy + 4}" fill="#c99e7f" />`;
 
-            // COLOCAR EL SOL DIÁMICAMENTE
             let anguloSolRad = (gradoSol + rotacionBase) * (Math.PI / 180);
             let xSol = cx + (radioInterior - 30) * Math.cos(anguloSolRad);
             let ySol = cy + (radioInterior - 30) * Math.sin(anguloSolRad);
             
-            // Icono del Sol antroposófico (Círculo con punto central)
             svg.innerHTML += `<circle cx="${xSol}" cy="${ySol}" r="6" fill="#fcecd2" stroke="#d49a83" stroke-width="1.5" />`;
             svg.innerHTML += `<circle cx="${xSol}" cy="${ySol}" r="1" fill="#d49a83" />`;
         }
 
-        // 3. CONTROLADOR DE LA INTERFAZ
-        document.getElementById('horoscopo-form').addEventListener('submit', async function(e) {
+        // CONTROLADOR DE LA INTERFAZ (MODELO HÍBRIDO SEGURO)
+        document.getElementById('horoscopo-form').addEventListener('submit', function(e) {
             e.preventDefault();
             
             const fecha = document.getElementById('fecha').value;
             const hora = document.getElementById('hora').value;
-            const lugar = document.getElementById('lugar').value;
+            const lugarSelect = document.getElementById('lugar-select').value;
             const boton = document.getElementById('btn-enviar');
             const contenedorResultado = document.getElementById('horoscopo-resultado');
             
             boton.disabled = true;
-            boton.innerText = "Sintonizando coordenadas del lugar...";
+            boton.innerText = "Sintonizando el mapa celeste...";
 
-            try {
-                const urlGeo = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(lugar)}&limit=1`;
-                const respuestaGeo = await fetch(urlGeo, { headers: { 'User-Agent': 'MiHoroscopoAntroposoficoApp' } });
-                const datosGeo = await respuestaGeo.json();
+            // Extraemos los datos pre-guardados en el menú desplegable (Latitud, Longitud, Nombre)
+            const [latStr, lonStr, nombreCiudad] = lugarSelect.split(',');
+            const latitud = parseFloat(latStr);
+            const longitud = parseFloat(lonStr);
 
-                if (!datosGeo || datosGeo.length === 0) {
-                    alert("No pudimos localizar la ciudad celestial. Revisa la ortografía.");
-                    boton.disabled = false;
-                    boton.innerText = "Calcular Mapa y Trazo";
-                    return;
-                }
+            const [ano, mes, dia] = fecha.split('-').map(Number);
+            const solObj = calcularSignoSolarPreciso(dia, mes);
+            const ascObj = calcularAscendenteReal(fecha, hora, latitud, longitud);
 
-                const latitud = parseFloat(datosGeo[0].lat);
-                const longitud = parseFloat(datosGeo[0].lon);
+            document.getElementById('signo-solar').innerText = solObj.nombre;
+            document.getElementById('signo-ascendente').innerText = ascObj.nombre;
 
-                boton.innerText = "Trazando tu mandala personal...";
+            // Trazamos el gráfico circular de forma instantánea
+            dibujarCartaNatal(solObj.gradoAbsoluto, ascObj.gradoAbsoluto);
 
-                const [ano, mes, dia] = fecha.split('-').map(Number);
-                const solObj = calcularSignoSolarPreciso(dia, mes);
-                const ascObj = calcularAscendenteReal(fecha, hora, latitud, longitud);
+            let textoHoroscopo = document.getElementById('texto-horoscopo');
+            textoHoroscopo.innerHTML = `
+                Querido buscador nacido bajo el cielo de <strong>${nombreCiudad}</strong><br><br>
+                El trazo superior despliega la geometría sagrada del espacio-tiempo en el segundo exacto de tu encarnación. Contempla la línea dorada a tu izquierda: representa tu <strong>Ascendente en ${ascObj.nombre}</strong>, el portal y la actitud con la que tu alma saluda al mundo.<br><br>
+                Tu <strong>Sol en ${solObj.nombre}</strong> ilumina hoy tus casas sutiles, invitándote a equilibrar tu energía vital con un sentido de amor profundo, mindfulness y enraizamiento terrestre. Confía en el hermoso mapa que hoy se dibuja para ti.
+            `;
 
-                // Pintamos los textos de la tríada
-                document.getElementById('signo-solar').innerText = solObj.nombre;
-                document.getElementById('signo-ascendente').innerText = ascObj.nombre;
-
-                // EJECUTAMOS EL TRAZO VECTORIAL REAL DE LA CARTA NATAL
-                dibujarCartaNatal(solObj.gradoAbsoluto, ascObj.gradoAbsoluto);
-
-                let textoHoroscopo = document.getElementById('texto-horoscopo');
-                textoHoroscopo.innerHTML = `
-                    Querido buscador nacido bajo el cielo de <strong>${datosGeo[0].display_name.split(',')[0]}</strong><br><br>
-                    El trazo superior despliega la geometría sagrada del espacio-tiempo en el segundo exacto de tu encarnación. Contempla la línea dorada a tu izquierda: representa tu <strong>Ascendente en ${ascObj.nombre}</strong>, el portal y la actitud con la que tu alma saluda al mundo.<br><br>
-                    Tu <strong>Sol en ${solObj.nombre}</strong> (representado por el núcleo radiante en la rueda) ilumina hoy tus casas sutiles, invitándote a equilibrar tu energía vital con un sentido de amor profundo, mindfulness y enraizamiento terrestre. Confía en el hermoso mapa que hoy se dibuja para ti.
-                `;
-
-                contenedorResultado.style.display = 'block';
-
-            } catch (error) {
-                console.error(error);
-                alert("Hubo un contratiempo al alinear las esferas celestes.");
-            } finally {
-                boton.disabled = false;
-                boton.innerText = "Calcular Mapa y Trazo";
-            }
+            contenedorResultado.style.display = 'block';
+            boton.disabled = false;
+            boton.innerText = "Calcular Mapa y Trazo";
         });
     </script>
 </body>
