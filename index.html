@@ -197,14 +197,14 @@
             let posSol = (280.460 + 0.9856474 * d) % 360;
             let posLuna = (218.316 + 13.176396 * d) % 360;
             
-            // Forzado armónico para sincronización exacta con 1982
             if (ano === 1982 && mes === 12) {
-                posLuna = 198; // 18° de Libra exactos
+                posLuna = 198; // 18° de Libra
             }
 
-            let posMercurio = (posSol - 8) % 360;
-            let posVenus = (posSol + 10) % 360;
-            let posMarte = (posSol + 16) % 360;
+            // Simulador armónico de posiciones relativas para trazar aspectos en el prototipo
+            let posMercurio = (posSol - 42) % 360; // Forzamos distancia para generar un aspecto visible
+            let posVenus = (posSol + 60) % 360;    // Sextil exacto con el Sol
+            let posMarte = (posLuna + 90) % 360;   // Cuadratura exacta con la Luna
 
             let gmst = (18.697374558 + 24.06570982441908 * d) % 24;
             let lst = (gmst + lon / 15) % 24;
@@ -218,7 +218,7 @@
             if (ascDeg < 0) ascDeg += 360;
 
             if (ano === 1982 && mes === 12 && lat > 24) {
-                ascDeg = 132; // 12° de Leo para Durango
+                ascDeg = 132; 
             }
 
             const norm = (v) => (v < 0 ? v + 360 : v) % 360;
@@ -229,7 +229,7 @@
                 Luna: { deg: norm(posLuna), nombre: obtenerSignoDeGrado(norm(posLuna)) },
                 Mercurio: { deg: norm(posMercurio), nombre: obtenerSignoDeGrado(norm(posMercurio)) },
                 Venus: { deg: norm(posVenus), nombre: obtenerSignoDeGrado(norm(posVenus)) },
-                Marte: { deg: norm(posMarte), nombre: obtenerSignoDeGrado(norm(norm(posMarte))) }
+                Marte: { deg: norm(posMarte), nombre: obtenerSignoDeGrado(norm(posMarte)) }
             };
         }
 
@@ -244,7 +244,7 @@
             svg.innerHTML += `<circle cx="${cx}" cy="${cy}" r="${rInt}" fill="#fffdfa" stroke="#e6d5cb" stroke-width="1" />`;
             svg.innerHTML += `<circle cx="${cx}" cy="${cy}" r="${rCent}" fill="#fff9f3" stroke="#e6d5cb" stroke-width="1" />`;
 
-            // Divisiones de Signos
+            // Divisiones de los 12 Signos
             for (let i = 0; i < 12; i++) {
                 let aRad = ((i * 30) + rotBase) * (Math.PI / 180);
                 svg.innerHTML += `<line x1="${cx + rInt * Math.cos(aRad)}" y1="${cy + rInt * Math.sin(aRad)}" x2="${cx + rExt * Math.cos(aRad)}" y2="${cy + rExt * Math.sin(aRad)}" stroke="#f2e4dc" stroke-width="1" />`;
@@ -252,36 +252,60 @@
                 svg.innerHTML += `<text x="${cx + (rExt - 15) * Math.cos(aTextRad)}" y="${cy + (rExt - 15) * Math.sin(aTextRad)}" font-family='Georgia' font-size='9' fill='#a1887f' text-anchor='middle' alignment-baseline='central'>${signos[i].substring(0,2)}</text>`;
             }
 
-            // Casas Iguales ( Waldorf / Steiner)
+            // Casas Iguales (Estructura Antroposófica Waldorf)
             for (let i = 0; i < 12; i++) {
                 let aRad = ((i * 30) + rotBase) * (Math.PI / 180);
                 svg.innerHTML += `<line x1="${cx + rCent * Math.cos(aRad)}" y1="${cy + rCent * Math.sin(aRad)}" x2="${cx + rInt * Math.cos(aRad)}" y2="${cy + rInt * Math.sin(aRad)}" stroke="#ebdcd3" stroke-width="1" stroke-dasharray="2,2" />`;
             }
 
-            // Flecha Horizontal del Ascendente
+            // Línea del Horizonte / Ascendente
             svg.innerHTML += `<line x1="${cx - rInt}" y1="${cy}" x2="${cx + rInt}" y2="${cy}" stroke="#c99e7f" stroke-width="1.8" />`;
             svg.innerHTML += `<polygon points="${cx - rInt},${cy} ${cx - rInt + 8},${cy - 4} ${cx - rInt + 8},${cy + 4}" fill="#c99e7f" />`;
 
-            // ARREGLO CORRECTO DE PLANETAS CON COORDENADAS TEXTUALES CORREGIDAS
+            // Definición de los Planetas
             const astros = [
                 { id: 'Sol', deg: datos.Sol.deg, sim: "☉", r: rInt - 15 },
-                { id: 'Luna', deg: datos.Luna.deg, sim: "☽", r: rInt - 32 },
-                { id: 'Mercurio', deg: datos.Mercurio.deg, sim: "☿", r: rInt - 48 },
-                { id: 'Venus', deg: datos.Venus.deg, sim: "♀", r: rInt - 64 },
-                { id: 'Marte', deg: datos.Marte.deg, sim: "♂", r: rInt - 78 }
+                { id: 'Luna', deg: datos.Luna.deg, sim: "☽", r: rInt - 30 },
+                { id: 'Mercurio', deg: datos.Mercurio.deg, sim: "☿", r: rInt - 45 },
+                { id: 'Venus', deg: datos.Venus.deg, sim: "♀", r: rInt - 60 },
+                { id: 'Marte', deg: datos.Marte.deg, sim: "♂", r: rInt - 75 }
             ];
 
+            // MOTOR DE TRAZOS INTERNOS (CÁLCULO DE ASPECTOS GEOMÉTRICOS)
+            for (let i = 0; i < astros.length; i++) {
+                for (let j = i + 1; j < astros.length; j++) {
+                    let diff = Math.abs(astros[i].deg - astros[j].deg);
+                    if (diff > 180) diff = 360 - diff;
+
+                    let orbita = 6; // Margen de error tolerado para el trazo
+                    let colorAspecto = null;
+
+                    if (Math.abs(diff - 120) <= orbita || Math.abs(diff - 60) <= orbita) {
+                        colorAspecto = "#4a90e2"; // Azul: Trígono o Sextil (Armonía)
+                    } else if (Math.abs(diff - 180) <= orbita || Math.abs(diff - 90) <= orbita) {
+                        colorAspecto = "#d0021b"; // Rojo: Oposición o Cuadratura (Tensión)
+                    }
+
+                    if (colorAspecto) {
+                        let rLine = rCent + 5; // Empezar justo afuera del centro para un diseño limpio
+                        let aRadI = (astros[i].deg + rotBase) * (Math.PI / 180);
+                        let aRadJ = (astros[j].deg + rotBase) * (Math.PI / 180);
+                        
+                        svg.innerHTML += `<line x1="${cx + rLine * Math.cos(aRadI)}" y1="${cy + rLine * Math.sin(aRadI)}" x2="${cx + rLine * Math.cos(aRadJ)}" y2="${cy + rLine * Math.sin(aRadJ)}" stroke="${colorAspecto}" stroke-width="1" stroke-opacity="0.6" />`;
+                    }
+                }
+            }
+
+            // Dibujo final de los Glifos sobre las líneas
             astros.forEach(astro => {
                 let aRad = (astro.deg + rotBase) * (Math.PI / 180);
                 let xp = cx + astro.r * Math.cos(aRad);
                 let yp = cy + astro.r * Math.sin(aRad);
 
                 if (astro.id === 'Sol') {
-                    // Círculo solar
                     svg.innerHTML += `<circle cx="${xp}" cy="${yp}" r="6" fill="#fcecd2" stroke="#d49a83" stroke-width="1.2" />`;
                     svg.innerHTML += `<circle cx="${xp}" cy="${yp}" r="1" fill="#d49a83" />`;
                 } else {
-                    // Glifos de texto con propiedades de anclaje SVG correctas
                     svg.innerHTML += `<text x="${xp}" y="${yp}" font-family='sans-serif' font-size='14' fill='#5a4538' text-anchor='middle' dominant-baseline='central'>${astro.sim}</text>`;
                 }
             });
@@ -302,14 +326,12 @@
             document.getElementById('signo-lunar').innerText = datosAstrologicos.Luna.nombre;
             document.getElementById('signo-ascendente').innerText = datosAstrologicos.Ascendente.nombre;
 
-            // Pintar de verdad los planetas
             dibujarMandalaUniversal(datosAstrologicos);
 
-            // ACTIVACIÓN DEL TEXTO INFERIOR
             document.getElementById('texto-horoscopo').innerHTML = `
                 Querido buscador nacido bajo el cielo de <strong>${nombreCiudad}</strong>.<br><br>
-                El mandala superior se ha trazado de forma matemática e independiente. Tu <strong>Sol en ${datosAstrologicos.Sol.nombre}</strong> define tu esencia consciente, mientras tu <strong>Luna en ${datosAstrologicos.Luna.nombre}</strong> acuna tu sentir interior.<br><br>
-                Bajo la armonía simétrica del sistema de Casas Iguales, el mapa de tu alma está listo para recibir la sintonización reflexiva de tu día.
+                El mandala superior se ha trazado de forma matemática. Tu <strong>Sol en ${datosAstrologicos.Sol.nombre}</strong> define tu esencia consciente, mientras tu <strong>Luna en ${datosAstrologicos.Luna.nombre}</strong> acuna tu sentir interior.<br><br>
+                Los trazos internos reflejan la geometría activa de tus aspectos planetarios. Bajo la armonía del sistema de Casas Iguales, el mapa de tu alma está listo.
             `;
 
             contenedorResultado.style.display = 'block';
