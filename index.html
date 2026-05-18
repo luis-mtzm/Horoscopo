@@ -195,12 +195,12 @@
             const [ano, mes, dia] = fechaStr.split('-').map(Number);
             const [horas, minutos] = horaStr.split(':').map(Number);
 
-            // 1. Crear fecha con la hora local ajustando la zona horaria para obtener el tiempo UTC real
+            // 1. Ajuste de zona horaria para obtener tiempo UTC real
             const fechaLocal = new Date(ano, mes - 1, dia, horas, minutos);
             const fechaUTC = new Date(fechaLocal.getTime() - (timezone * 60 * 60 * 1000));
             const astroTime = Astronomy.MakeTime(fechaUTC);
 
-            // 2. Obtener posiciones eclípticas geo-céntricas verdaderas de los astros (NASA VSOP87/DE405)
+            // 2. Posiciones eclípticas verdaderas (Modelos analíticos planetarios de la NASA)
             const posSol = Astronomy.EclipticLongitude(Astronomy.Body.Sun, astroTime);
             const posLuna = Astronomy.EclipticLongitude(Astronomy.Body.Moon, astroTime);
             const posMercurio = Astronomy.EclipticLongitude(Astronomy.Body.Mercury, astroTime);
@@ -208,9 +208,9 @@
             const posMarte = Astronomy.EclipticLongitude(Astronomy.Body.Mars, astroTime);
 
             // 3. Cálculo matemático exacto del Ascendente basado en el Tiempo Sidéreo Local Real
-            const siderealTime = Astronomy.SiderealTime(astroTime); // GMST en horas
-            const lst = (siderealTime + lon / 15) % 24; // Tiempo sidéreo local en horas
-            const ramc = lst * 15; // Recta ascensión en grados
+            const siderealTime = Astronomy.SiderealTime(astroTime); 
+            const lst = (siderealTime + lon / 15) % 24; 
+            const ramc = lst * 15; 
             const obliq = 23.4393 * (Math.PI / 180);
             const latRad = lat * (Math.PI / 180);
             const ramcRad = ramc * (Math.PI / 180);
@@ -236,12 +236,12 @@
             const cx = 150, cy = 150, rExt = 130, rInt = 100, rCent = 30;
             const rotBase = 180 - datos.Ascendente.deg;
 
-            // Círculos concéntricos de diseño
+            // Anillos estructurales
             svg.innerHTML += `<circle cx="${cx}" cy="${cy}" r="${rExt}" fill="none" stroke="#d4b296" stroke-width="1.5" />`;
             svg.innerHTML += `<circle cx="${cx}" cy="${cy}" r="${rInt}" fill="#fffdfa" stroke="#e6d5cb" stroke-width="1" />`;
             svg.innerHTML += `<circle cx="${cx}" cy="${cy}" r="${rCent}" fill="#fff9f3" stroke="#e6d5cb" stroke-width="1" />`;
 
-            // Rueda de los 12 signos (30° exactos cada uno)
+            // Rueda de los 12 signos
             for (let i = 0; i < 12; i++) {
                 let aRad = ((i * 30) + rotBase) * (Math.PI / 180);
                 svg.innerHTML += `<line x1="${cx + rInt * Math.cos(aRad)}" y1="${cy + rInt * Math.sin(aRad)}" x2="${cx + rExt * Math.cos(aRad)}" y2="${cy + rExt * Math.sin(aRad)}" stroke="#f2e4dc" stroke-width="1" />`;
