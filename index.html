@@ -239,6 +239,47 @@
             display: none;
         }
 
+        /* Indicador de carga: glifo dorado que gira + mensajes poéticos que ciclan */
+        .loader-cosmico {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            color: #d4af7a;
+            font-style: italic;
+            font-size: 0.95rem;
+            padding: 6px 0;
+        }
+        .loader-glifo {
+            display: inline-block;
+            font-size: 1.4rem;
+            color: #e8c896;
+            text-shadow: 0 0 12px rgba(232, 200, 150, 0.5);
+            animation: girar-glifo 4s linear infinite;
+        }
+        @keyframes girar-glifo {
+            from { transform: rotate(0deg); }
+            to   { transform: rotate(360deg); }
+        }
+        .loader-textos {
+            position: relative;
+            flex: 1;
+            min-height: 1.5em;
+        }
+        .loader-texto {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            animation: ciclar-texto 9s ease-in-out infinite;
+        }
+        .loader-texto:nth-child(1) { animation-delay: 0s; }
+        .loader-texto:nth-child(2) { animation-delay: 3s; }
+        .loader-texto:nth-child(3) { animation-delay: 6s; }
+        @keyframes ciclar-texto {
+            0%, 33%, 100% { opacity: 0; transform: translateY(4px); }
+            5%, 28%       { opacity: 1; transform: translateY(0); }
+        }
+
         @media (max-width: 850px) {
             body { display: block; padding: 10px; }
             .dashboard-screen { flex-direction: column; width: 100%; margin: 0; }
@@ -599,6 +640,55 @@
         }
 
         // ============================================================
+        // CÁLCULO DE TRÁNSITOS DEL DÍA
+        // ============================================================
+        /**
+         * Calcula las posiciones planetarias del momento actual y detecta los
+         * aspectos exactos que esos tránsitos hacen a los puntos natales.
+         * Devuelve los 10 aspectos más exactos.
+         */
+        function calcularTransitosHoy(datosNatales) {
+            const ahora = new Date();
+            const planetasHoy = calcularPlanetas(ahora);
+
+            // Aspectos clásicos con orbes ajustados para tránsitos
+            // (más estrictos que para la carta natal).
+            const aspectos = [
+                { nombre: 'conjunción', angulo: 0,   orbe: 4 },
+                { nombre: 'sextil',     angulo: 60,  orbe: 2 },
+                { nombre: 'cuadratura', angulo: 90,  orbe: 3 },
+                { nombre: 'trígono',    angulo: 120, orbe: 3 },
+                { nombre: 'oposición',  angulo: 180, orbe: 4 }
+            ];
+            const cuerpos = ['Sol','Luna','Mercurio','Venus','Marte','Jupiter','Saturno','Urano','Neptuno','Pluto'];
+            const lentos  = new Set(['Jupiter','Saturno','Urano','Neptuno','Pluto']);
+            const transitos = [];
+
+            const evaluar = (transitor, natal, degT, degN) => {
+                let diff = Math.abs(norm360(degT) - norm360(degN));
+                if (diff > 180) diff = 360 - diff;
+                for (const asp of aspectos) {
+                    const orbita = Math.abs(diff - asp.angulo);
+                    if (orbita <= asp.orbe) {
+                        // Filtrar aspectos generacionales (lento↔lento) salvo si son muy exactos.
+                        const esGen = lentos.has(transitor) && lentos.has(natal);
+                        if (esGen && orbita > 1) continue;
+                        transitos.push({ transitor, natal, aspecto: asp.nombre, orbe: orbita, degT });
+                    }
+                }
+            };
+
+            for (const t of cuerpos) {
+                for (const n of cuerpos) evaluar(t, n, planetasHoy[t].deg, datosNatales[n].deg);
+                evaluar(t, 'Ascendente',  planetasHoy[t].deg, datosNatales.Ascendente.deg);
+                evaluar(t, 'Medio Cielo', planetasHoy[t].deg, datosNatales.MC.deg);
+            }
+
+            transitos.sort((a, b) => a.orbe - b.orbe);
+            return { posicionesHoy: planetasHoy, transitos: transitos.slice(0, 10), fechaUTC: ahora };
+        }
+
+        // ============================================================
         // DIBUJO DEL MANDALA (sin cambios estéticos)
         // ============================================================
         function dibujarMandalaAstrodienst(datos) {
@@ -685,7 +775,7 @@
         // ============================================================
         // INTERPRETACIÓN POR IA — solo interpretación, sin cálculos
         // ============================================================
-        async function solicitarInterpretacionIA(datos, intencionText, fechaHoy, apiKey) {
+        async function solicitarInterpretacionIA(datos, transitos, intencionText, fechaHoy, apiKey) {
             const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${apiKey}`;
 
             // Resumen astronómico real, ya calculado en el cliente.
@@ -698,6 +788,17 @@
             const resumenCuspides = datos.Cuspides
                 .map((c, i) => `  Casa ${i+1}: ${formatearGradoEnSigno(c)}`)
                 .join('\n');
+
+            // Resumen de los tránsitos del día.
+            const resumenHoy = ['Sol','Luna','Mercurio','Venus','Marte','Jupiter','Saturno']
+                .map(p => `- ${p} hoy: ${formatearGradoEnSigno(transitos.posicionesHoy[p].deg)}`)
+                .join('\n');
+
+            const resumenAspectos = transitos.transitos.length
+                ? transitos.transitos.map(t =>
+                    `- ${t.transitor} en tránsito (${formatearGradoEnSigno(t.degT)}) hace ${t.aspecto} con ${t.natal} natal (orbe ${t.orbe.toFixed(2)}°)`
+                  ).join('\n')
+                : "- (Sin aspectos exactos significativos entre los tránsitos de hoy y los puntos natales)";
 
             const prompt = `
 Tu identidad: Eres un consultor astrológico serio, profesional y elegante. Al mismo tiempo eres cálido y cercano. Te diriges al usuario estrictamente de "tú" (tuteo). No eres informal, pero tampoco distante. Te expresas con profundidad sin ser complicado o rebuscado.
@@ -716,17 +817,25 @@ ${resumenPlanetas}
 Cúspides de las 12 casas (Plácidus):
 ${resumenCuspides}
 
+TRÁNSITOS REALES DE HOY (calculados con la misma precisión astronómica: las posiciones actuales del cielo y los aspectos exactos que esos planetas en movimiento hacen sobre los puntos natales en este momento. ESTOS son los movimientos celestes vivos sobre la persona hoy; úsalos como fuente única para [VIDA] y [LABORAL]):
+
+Posiciones del cielo de hoy:
+${resumenHoy}
+
+Aspectos exactos activos hoy (cuanto menor el orbe, más exacto y dominante el aspecto):
+${resumenAspectos}
+
 INSTRUCCIONES DE SALIDA:
 Genera exactamente tres bloques narrativos, separados por las etiquetas exactas en mayúsculas y entre corchetes. No incluyas títulos, cálculos, listas técnicas, asteriscos ni markdown — solo prosa fluida dentro de cada bloque.
 
 [NATAL]
-Interpretación profunda, contundente y breve de su esencia natal, basada en el conjunto Sol–Luna–Ascendente y los aspectos más relevantes del mapa que recibiste. Háblale directamente de tú. Máximo cuatro frases.
+Interpretación profunda, contundente y breve de su esencia natal, basada en el conjunto Sol–Luna–Ascendente y los aspectos más relevantes del mapa que recibiste. No menciones aquí los tránsitos: este bloque es sobre quién es, no sobre lo que pasa hoy. Háblale directamente de tú. Máximo cuatro frases.
 
 [VIDA]
-Consejo de centramiento y presencia para su vida personal el día de hoy (${fechaHoy}), respondiendo a su intención declarada. Máximo cuatro frases.
+Consejo de centramiento y presencia para su vida personal el día de hoy (${fechaHoy}), enraizado en los tránsitos activos sobre su carta. Apóyate en los uno o dos aspectos más exactos de la lista de tránsitos para iluminar qué pide el cielo hoy de su vida personal. No nombres los planetas ni los aspectos técnicamente — traduce su cualidad a una sugerencia clara y vivencial. Responde a su intención declarada. Máximo cuatro frases.
 
 [LABORAL]
-Guía con estructura para el pensamiento ordenado y la acción consciente en sus actividades profesionales de este día. Máximo cuatro frases.
+Guía con estructura para el pensamiento ordenado y la acción consciente en sus actividades profesionales de este día, también enraizada en los tránsitos activos. Cuando sea posible, apóyate en aspectos distintos a los que usaste en [VIDA]. No menciones planetas por su nombre; traduce su energía a orientación profesional concreta. Máximo cuatro frases.
             `.trim();
 
             const response = await fetch(url, {
@@ -816,12 +925,34 @@ Guía con estructura para el pensamiento ordenado y la acción consciente en sus
                     document.getElementById('pantalla-dashboard').style.display  = 'flex';
 
                     // --- 4. Pedir solo la interpretación poética a la IA ---
-                    document.getElementById('texto-natal-fijo').innerText = "Sintonizando tu esencia natal...";
-                    document.getElementById('consejo-vida').innerText     = "Sintonizando...";
-                    document.getElementById('consejo-laboral').innerText  = "Estructurando...";
+                    const loaderHTML = (frases) => `
+                        <div class="loader-cosmico">
+                            <span class="loader-glifo">✦</span>
+                            <div class="loader-textos">
+                                <span class="loader-texto">${frases[0]}</span>
+                                <span class="loader-texto">${frases[1]}</span>
+                                <span class="loader-texto">${frases[2]}</span>
+                            </div>
+                        </div>`;
+                    document.getElementById('texto-natal-fijo').innerHTML = loaderHTML([
+                        "Trazando las constelaciones de tu esencia",
+                        "Leyendo el orden de tu mapa interior",
+                        "Sintonizando voz y silencio"
+                    ]);
+                    document.getElementById('consejo-vida').innerHTML = loaderHTML([
+                        "Consultando el cielo de hoy",
+                        "Escuchando lo que el día sostiene",
+                        "Acomodando la presencia"
+                    ]);
+                    document.getElementById('consejo-laboral').innerHTML = loaderHTML([
+                        "Ordenando las luces de tu acción",
+                        "Buscando estructura en el día",
+                        "Dejando que la forma aparezca"
+                    ]);
 
                     const interp = await solicitarInterpretacionIA(
-                        datosCosmicos, intencionText, fechaHoyText, apiKeyIngresada
+                        datosCosmicos, calcularTransitosHoy(datosCosmicos),
+                        intencionText, fechaHoyText, apiKeyIngresada
                     );
 
                     document.getElementById('texto-natal-fijo').innerText = interp.natal;
@@ -834,9 +965,14 @@ Guía con estructura para el pensamiento ordenado y la acción consciente en sus
                     errorBanner.style.display = 'block';
                     // También avisar en el dashboard si ya se mostró
                     const natalEl = document.getElementById('texto-natal-fijo');
-                    if (natalEl && natalEl.innerText.startsWith('Sintonizando')) {
+                    if (natalEl && natalEl.querySelector('.loader-cosmico')) {
                         natalEl.innerText = "La lectura interpretativa no pudo completarse (" + (err.message || err) + "). La carta mostrada arriba es astronómicamente correcta.";
                     }
+                    // Limpiar también los otros dos bloques si quedaron con loader
+                    ['consejo-vida','consejo-laboral'].forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el && el.querySelector('.loader-cosmico')) el.innerText = "—";
+                    });
                 } finally {
                     boton.disabled = false;
                     boton.innerText = "Calcular Mi Mapa Astral";
