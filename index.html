@@ -328,7 +328,8 @@
     </div>
 
     <script>
-        const MODEL_NAME = "gemini-2.5-flash"; 
+        // MODELO OFICIAL ESTABLE DE PRODUCCIÓN GLOBAL
+        const MODEL_NAME = "gemini-1.5-flash"; 
         const signos = ["Aries", "Tauro", "Géminis", "Cáncer", "Leo", "Virgo", "Libra", "Escorpio", "Sagitario", "Capricornio", "Acuario", "Piscis"];
         const glifos = { Sol: "☉", Luna: "☽", Mercurio: "☿", Venus: "♀", Marte: "♂", Jupiter: "♃", Saturno: "♄", Urano: "♅", Neptuno: "♆", Pluto: "♇" };
 
@@ -359,6 +360,7 @@
 
         function dibujarMandalaAstrodienst(datos) {
             const svg = document.getElementById('canvas-carta');
+            if (!svg) return;
             svg.innerHTML = '';
             const cx = 150, cy = 150, rExt = 130, rInt = 105, rCent = 32;
 
@@ -379,15 +381,15 @@
                 svg.innerHTML += `<text x="${cx + (rExt - 12) * Math.cos(aRadTexto)}" y="${cy + (rExt - 12) * Math.sin(aRadTexto)}" font-family='Georgia' font-size='8.5' fill='#a1887f' text-anchor='middle' alignment-baseline='central'>${signos[i].substring(0,2)}</text>`;
             }
 
-            // REPARACIÓN DEFINITIVA DEL LOG DE EVALUACIÓN (SINTAXIS LIMPIA DE ERRORES DE DEDO)
+            // FUNCIÓN REPARADA Y PROTEGIDA CONTRA ERRORES DE SINTAXIS
             for (let i = 0; i < 12; i++) {
                 let degCuspide = datos.Cuspides[i];
                 let aRadCuspide = transformarAnguloFijo(degCuspide);
                 
-                let esPrincipal = (i === 0 || i === 9);
-                let colorLinea = esPrincipal ? "#b38463" : "#ebdcd3";
-                let grosor = esPrincipal ? "1.8" : "1";
-                let punteado = esPrincipal ? "none" : "2,2";
+                let esEje = (i === 0 || i === 9);
+                let colorLinea = esEje ? "#b38463" : "#ebdcd3";
+                let grosor = esEje ? "1.8" : "1";
+                let punteado = esEje ? "none" : "2,2";
 
                 svg.innerHTML += `<line x1="${cx + rCent * Math.cos(aRadCuspide)}" y1="${cy + rCent * Math.sin(aRadCuspide)}" x2="${cx + rInt * Math.cos(aRadCuspide)}" y2="${cy + rInt * Math.sin(aRadCuspide)}" stroke="${colorLinea}" stroke-width="${grosor}" stroke-dasharray="${punteado}" />`;
             }
@@ -450,7 +452,7 @@
             
             const prompt = `
                 Tu identidad: Eres un consultor astrológico serio, profesional y elegante. Al mismo tiempo eres cálido y cercano. Te diriges al usuario estrictamente de "tú" (tuteo). No eres informal, pero tampoco distante. Te expresas con profundidad sin ser complicado o rebuscado.
-                Tu lenguaje: Poético pero preciso. Prefieres las frases cortas y contundentes sobre los párrafos largos. Cuidad mucho cada palabra. Evitas por completo el lenguaje de ventas, la urgencia forzada y las frases hechas del mundo espiritual popular.
+                Tu lenguaje: Poético pero preciso. Prefieres las frases corta y contundentes sobre los párrafos largos. Cuidas mucho cada palabra. Evitas por completo el lenguaje de ventas, la urgencia forzada y las frases hechas del mundo espiritual popular.
                 Tus valores: Integridad, coherencia y autenticidad. Tratas a tu audiencia como adultos conscientes en una búsqueda espiritual seria que quieren desarrollarse con rigor, estructura y amor. Nunca suenas desesperado por convencer, evitas las metáforas excesivas y jamás eres superficial. No cites autores ni nombres académicos.
                 Contexto de intención: El usuario ha declarado conscientemente que entra a este espacio con la siguiente intención real: "${intencionText}". Enmarca tus consejos sutilmente hacia esa necesidad de su conciencia.
 
@@ -542,50 +544,56 @@
             }
         }
 
-        document.getElementById('horoscopo-form').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const fecha = document.getElementById('fecha').value;
-            const hora = document.getElementById('hora').value;
-            const lugarSelect = document.getElementById('lugar-select').value;
-            const apiKeyIngresada = document.getElementById('api-key-input').value.trim();
-            const intencionText = document.getElementById('intencion-select').value;
-            const compromisoAceptado = document.getElementById('compromiso-check').checked;
-            const boton = document.getElementById('btn-enviar');
-            
-            if(!apiKeyIngresada) { alert("Por favor introduce tu Clave de Acceso."); return; }
-            if(!compromisoAceptado) { alert("Por favor, lee y asume el compromiso ético de veracidad para continuar."); return; }
+        // CONTROLADOR DE INICIALIZACIÓN PROTEGIDO CONTRA ERRORES DE CARGA
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('horoscopo-form');
+            if (!form) return;
 
-            localStorage.setItem('user_cosmos_key', apiKeyIngresada);
-            boton.disabled = true;
-            boton.innerText = "Calculando Cúspides Reales...";
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const fecha = document.getElementById('fecha').value;
+                const hora = document.getElementById('hora').value;
+                const lugarSelect = document.getElementById('lugar-select').value;
+                const apiKeyIngresada = document.getElementById('api-key-input').value.trim();
+                const intencionText = document.getElementById('intencion-select').value;
+                const compromisoAceptado = document.getElementById('compromiso-check').checked;
+                const boton = document.getElementById('btn-enviar');
+                
+                if(!apiKeyIngresada) { alert("Por favor introduce tu Clave de Acceso."); return; }
+                if(!compromisoAceptado) { alert("Por favor, lee y asume el compromiso ético de veracidad para continuar."); return; }
 
-            const [latStr, lonStr, tzStr, nombreCiudad] = lugarSelect.split(',');
-            let datosCosmicos = generarDatosEstructuraBase(fecha);
+                localStorage.setItem('user_cosmos_key', apiKeyIngresada);
+                boton.disabled = true;
+                boton.innerText = "Calculando Cúspides Reales...";
 
-            const fechaHoyText = obtenerFechaActualFormateada();
-            document.getElementById('fecha-actual-badge').innerText = fechaHoyText;
+                const [latStr, lonStr, tzStr, nombreCiudad] = lugarSelect.split(',');
+                let datosCosmicos = generarDatosEstructuraBase(fecha);
 
-            document.getElementById('lbl-solar').innerText = "Sol: " + obtenerSignoDeGrado(datosCosmicos.Sol.deg);
-            document.getElementById('lbl-lunar').innerText = "Luna: " + obtenerSignoDeGrado(datosCosmicos.Luna.deg);
-            document.getElementById('lbl-ascendente').innerText = "Asc: " + datosCosmicos.Ascendente.nombre;
-            dibujarMandalaAstrodienst(datosCosmicos);
+                const fechaHoyText = obtenerFechaActualFormateada();
+                document.getElementById('fecha-actual-badge').innerText = fechaHoyText;
 
-            document.getElementById('pantalla-bienvenida').style.display = 'none';
-            document.getElementById('pantalla-dashboard').style.display = 'flex';
+                document.getElementById('lbl-solar').innerText = "Sol: " + obtenerSignoDeGrado(datosCosmicos.Sol.deg);
+                document.getElementById('lbl-lunar').innerText = "Luna: " + obtenerSignoDeGrado(datosCosmicos.Luna.deg);
+                document.getElementById('lbl-ascendente').innerText = "Asc: " + datosCosmicos.Ascendente.nombre;
+                dibujarMandalaAstrodienst(datosCosmicos);
 
-            const respuestaIA = await solicitarInterpretacionYPlacidusIA(datosCosmicos, fecha, hora, nombreCiudad, intencionText, fechaHoyText, apiKeyIngresada);
+                document.getElementById('pantalla-bienvenida').style.display = 'none';
+                document.getElementById('pantalla-dashboard').style.display = 'flex';
 
-            datosCosmicos = respuestaIA.datosAstronomicos;
-            document.getElementById('lbl-solar').innerText = "Sol: " + obtenerSignoDeGrado(datosCosmicos.Sol.deg);
-            document.getElementById('lbl-lunar').innerText = "Luna: " + obtenerSignoDeGrado(datosCosmicos.Luna.deg);
-            document.getElementById('lbl-ascendente').innerText = "Asc: " + datosCosmicos.Ascendente.nombre;
-            
-            dibujarMandalaAstrodienst(datosCosmicos);
+                const respuestaIA = await solicitarInterpretacionYPlacidusIA(datosCosmicos, fecha, hora, nombreCiudad, intencionText, fechaHoyText, apiKeyIngresada);
 
-            document.getElementById('texto-natal-fijo').innerHTML = respuestaIA.natal;
-            document.getElementById('consejo-vida').innerHTML = respuestaIA.vida;
-            document.getElementById('consejo-laboral').innerHTML = respuestaIA.laboral;
+                datosCosmicos = respuestaIA.datosAstronomicos;
+                document.getElementById('lbl-solar').innerText = "Sol: " + obtenerSignoDeGrado(datosCosmicos.Sol.deg);
+                document.getElementById('lbl-lunar').innerText = "Luna: " + obtenerSignoDeGrado(datosCosmicos.Luna.deg);
+                document.getElementById('lbl-ascendente').innerText = "Asc: " + datosCosmicos.Ascendente.nombre;
+                
+                dibujarMandalaAstrodienst(datosCosmicos);
+
+                document.getElementById('texto-natal-fijo').innerHTML = respuestaIA.natal;
+                document.getElementById('consejo-vida').innerHTML = respuestaIA.vida;
+                document.getElementById('consejo-laboral').innerHTML = respuestaIA.laboral;
+            });
         });
     </script>
 </body>
