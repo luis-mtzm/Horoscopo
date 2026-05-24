@@ -106,7 +106,6 @@
             font-style: italic;
         }
 
-        /* Fuerza a la casilla a no estirarse por completo */
         .checkbox-fix {
             width: auto !important;
             height: auto !important;
@@ -378,15 +377,14 @@
                 svg.innerHTML += `<text x="${cx + (rExt - 12) * Math.cos(aRadTexto)}" y="${cy + (rExt - 12) * Math.sin(aRadTexto)}" font-family='Georgia' font-size='8.5' fill='#a1887f' text-anchor='middle' alignment-baseline='central'>${signos[i].substring(0,2)}</text>`;
             }
 
-            // CORRECCIÓN CLAVE DE SINTAXIS EN ESTA LÍNEA (LÍNEA 256 REPARADA)
+            // REPARACIÓN COMPLETA Y SIMPLIFICADA DE LA LOGICA DEL TRAZADO
             for (let i = 0; i < 12; i++) {
                 let degCuspide = datos.Cuspides[i];
                 let aRadCuspide = transformarAnguloFijo(degCuspide);
                 
-                let esEjeEstructural = (i === 0 || i === 9); 
-                let colorLinea = esEjeEstructural ? "#b38463" : "#ebdcd3";
-                let grosor = esEjeEstructural ? "1.8" : "1";
-                let punteado = esEjeEstructural ? "none" : "2,2";
+                let colorLinea = (i === 0 || i === 9) ? "#b38463" : "#ebdcd3";
+                let grosor = (i === 0 || i === 9) ? "1.8" : "1";
+                let punteado = (i === 0 || i === 9) ? "none" : "2,2";
 
                 svg.innerHTML += `<line x1="${cx + rCent * Math.cos(aRadCuspide)}" y1="${cy + rCent * Math.sin(aRadCuspide)}" x2="${cx + rInt * Math.cos(aRadCuspide)}" y2="${cy + rInt * Math.sin(aRadCuspide)}" stroke="${colorLinea}" stroke-width="${grosor}" stroke-dasharray="${punteado}" />`;
             }
