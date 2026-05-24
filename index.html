@@ -338,7 +338,7 @@
         // ============================================================
         // CONSTANTES Y UTILIDADES
         // ============================================================
-        const MODEL_NAME = "gemini-1.5-flash";
+        const MODEL_NAME = "gemini-2.5-flash";
         const signos = ["Aries", "Tauro", "Géminis", "Cáncer", "Leo", "Virgo", "Libra", "Escorpio", "Sagitario", "Capricornio", "Acuario", "Piscis"];
         const glifos = { Sol: "☉", Luna: "☽", Mercurio: "☿", Venus: "♀", Marte: "♂", Jupiter: "♃", Saturno: "♄", Urano: "♅", Neptuno: "♆", Pluto: "♇" };
 
@@ -835,7 +835,7 @@ Guía con estructura para el pensamiento ordenado y la acción consciente en sus
                     // También avisar en el dashboard si ya se mostró
                     const natalEl = document.getElementById('texto-natal-fijo');
                     if (natalEl && natalEl.innerText.startsWith('Sintonizando')) {
-                        natalEl.innerText = "La lectura interpretativa no pudo completarse. La carta mostrada arriba es astronómicamente correcta.";
+                        natalEl.innerText = "La lectura interpretativa no pudo completarse (" + (err.message || err) + "). La carta mostrada arriba es astronómicamente correcta.";
                     }
                 } finally {
                     boton.disabled = false;
