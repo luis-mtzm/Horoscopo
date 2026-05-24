@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tu Guía Diaria Antroposófica</title>
+    <title>Tu Guía Diaria</title>
     <style>
         /* ESTILOS BASE Y PALETA WALDORF/PASTEL */
         body {
@@ -258,7 +258,7 @@
             </div>
             <div class="explicacion-natal-section">
                 <h2>Tu Esencia de Nacimiento</h2>
-                <div id="texto-natal-fijo" class="texto-bloque">Cargando lectura del alma...</div>
+                <div id="texto-natal-fijo" class="texto-bloque">Cargando lectura...</div>
             </div>
         </div>
 
@@ -267,10 +267,10 @@
             <h2>El Consejo del Día</h2>
             <div class="consejo-diario-contenedor">
                 <h3>🍃 Para la Vida Personal</h3>
-                <div id="consejo-vida" class="texto-bloque">Sintonizando vibración personal...</div>
+                <div id="consejo-vida" class="texto-bloque">Sintonizando...</div>
                 
                 <h3>💼 Para el Ámbito Laboral</h3>
-                <div id="consejo-laboral" class="texto-bloque">Estructurando propósito consciente...</div>
+                <div id="consejo-laboral" class="texto-bloque">Estructurando...</div>
             </div>
         </div>
     </div>
@@ -300,9 +300,8 @@
 
             let posSol = (280.460 + 0.9856474 * d) % 360;
             let posLuna = (218.316 + 13.176396 * d) % 360;
-            let ascDeg = (posSol + 180) % 360; // Estimación cruda inicial
+            let ascDeg = (posSol + 180) % 360; 
 
-            // Calibración Manual de Seguridad (9 de Dic de 1982)
             if (ano === 1982 && mes === 12 && dia === 9) {
                 posSol = 257; posLuna = 198; ascDeg = 132;
             }
@@ -324,30 +323,27 @@
             };
         }
 
-        // MOTOR GRÁFICO CORREGIDO: CASAS IGUALES Y SENTIDO ANTI-HORARIO (LEVÓGIRO)
+        // MOTOR GRÁFICO LEVÓGIRO CON CASAS SIMÉTRICAS DE 30 GRADOS EXACTOS
         function dibujarMandalaUniversal(datos) {
             const svg = document.getElementById('canvas-carta');
             svg.innerHTML = '';
             const cx = 150, cy = 150, rExt = 130, rInt = 105, rCent = 32;
-            const rotBase = 180; // Fuerza el Ascendente a estabilizarse estrictamente a la izquierda
+            const rotBase = 180; 
 
-            // Círculos concéntricos de geometría sagrada
             svg.innerHTML += `<circle cx="${cx}" cy="${cy}" r="${rExt}" fill="none" stroke="#d4b296" stroke-width="1.5" />`;
             svg.innerHTML += `<circle cx="${cx}" cy="${cy}" r="${rInt}" fill="#fffdfa" stroke="#e6d5cb" stroke-width="1" />`;
             svg.innerHTML += `<circle cx="${cx}" cy="${cy}" r="${rCent}" fill="#fff9f3" stroke="#e6d5cb" stroke-width="1" />`;
 
-            // Transformador angular astrológico (Geometría Levógira)
             function transformarAnguloAstrologico(degPlaneta) {
                 let delta = degPlaneta - datos.Ascendente.deg;
-                return (rotBase - delta) * (Math.PI / 180); // Restar el delta invierte el sentido para la web
+                return (rotBase - delta) * (Math.PI / 180); 
             }
 
-            // Renderizar las 12 Casas Simétricas de 30 grados exactos
             for (let i = 0; i < 12; i++) {
                 let degSeparador = datos.Ascendente.deg + (i * 30);
                 let aRad = transformarAnguloAstrologico(degSeparador);
                 
-                svg.innerHTML += `<line x1="${cx + rCent * Math.cos(aRad)}" y1="${cy + rCent * Math.sin(aRad)}" x2="${cx + rExt * Math.cos(aRad)}" y2="${cy + rExt * Math.sin(aRad)}" stroke="#ebdcd3" stroke-width="1" stroke-dasharray="2,2" />`;
+                svg.innerHTML += `<line x1="${cx + rCent * Math.cos(aRad)}" y1="${cy + rCent * Math.sin(aRad)}" x2="${cx + rInt * Math.cos(aRad)}" y2="${cy + rInt * Math.sin(aRad)}" stroke="#ebdcd3" stroke-width="1" stroke-dasharray="2,2" />`;
                 svg.innerHTML += `<line x1="${cx + rInt * Math.cos(aRad)}" y1="${cy + rInt * Math.sin(aRad)}" x2="${cx + rExt * Math.cos(aRad)}" y2="${cy + rExt * Math.sin(aRad)}" stroke="#f2e4dc" stroke-width="1" />`;
                 
                 let aTextRad = transformarAnguloAstrologico(degSeparador + 15);
@@ -355,11 +351,9 @@
                 svg.innerHTML += `<text x="${cx + (rExt - 12) * Math.cos(aTextRad)}" y="${cy + (rExt - 12) * Math.sin(aTextRad)}" font-family='Georgia' font-size='8.5' fill='#a1887f' text-anchor='middle' alignment-baseline='central'>${signos[signoIndice].substring(0,2)}</text>`;
             }
 
-            // Eje Horizontal del Ascendente de Alto Impacto Visual
             svg.innerHTML += `<line x1="${cx - rInt}" y1="${cy}" x2="${cx + rInt}" y2="${cy}" stroke="#c99e7f" stroke-width="1.8" />`;
             svg.innerHTML += `<polygon points="${cx - rInt},${cy} ${cx - rInt + 8},${cy - 4} ${cx - rInt + 8},${cy + 4}" fill="#c99e7f" />`;
 
-            // Mapeo Dinámico de los 10 Cuerpos Celestes con Radios Escalonados
             const astros = [
                 { id: 'Sol', deg: datos.Sol.deg, sim: glifos.Sol, r: rInt - 12 },
                 { id: 'Luna', deg: datos.Luna.deg, sim: glifos.Luna, r: rInt - 24 },
@@ -373,7 +367,6 @@
                 { id: 'Pluto', deg: datos.Pluto.deg, sim: glifos.Pluto, r: rInt - 60 }
             ];
 
-            // Trazador General de Aspectos Cruzados (Matriz Completa de 10 Astross)
             for (let i = 0; i < astros.length; i++) {
                 for (let j = i + 1; j < astros.length; j++) {
                     let diff = Math.abs(astros[i].deg - astros[j].deg);
@@ -393,7 +386,6 @@
                 }
             }
 
-            // Dibujar Glifos
             astros.forEach(astro => {
                 let aRad = transformarAnguloAstrologico(astro.deg);
                 let xp = cx + astro.r * Math.cos(aRad), yp = cy + astro.r * Math.sin(aRad);
@@ -409,24 +401,32 @@
             return new Date().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
         }
 
-        // EXTRACCIÓN ROBUSTA MEDIANTE EXPRESIONES REGULARES (Evita bloqueos de formato de la IA)
+        // CONTROLADOR DE IA CON TU MANIFIESTO DE COMUNICACIÓN DIRECTO
         async function solicitarInterpretacionYCoordenadasIA(datosIniciales, fechaStr, horaStr, ciudad, fechaHoy, apiKeyDinamica) {
             const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${apiKeyDinamica}`;
             
             const prompt = `
-                Actúas como un consultor astrológico antroposófico senior y base de datos de efemérides verdaderas de la NASA.
-                El usuario nació en la ciudad de ${ciudad} el día ${fechaStr} a las ${horaStr}. La fecha de hoy que transcurre es ${fechaHoy}.
+                Tu identidad: Eres un consultor astrológico serio, profesional y elegante. Al mismo tiempo eres cálido y cercano. No eres informal, pero tampoco distante. Te expresas con profundidad sin ser complicado.
+                Tu lenguaje: Poético pero preciso. Prefieres frases cortas y contundentes sobre párrafos largos. Cuidas mucho cada palabra. Evitas por completo el lenguaje de ventas, la urgencia forzada y las frases hechas del mundo espiritual popular.
+                Tus valores: Integridad, coherencia y autenticidad. Tratas a tu audiencia como adultos conscientes en una búsqueda seria de desarrollo con rigor, estructura y amor. Nunca suenas desesperado, evitas las metáforas excesivas y jamás eres superficial. No cites a autores ni digas nombres académicos (como Rudolf Steiner o Antroposofía), integra la sabiduría de forma natural en el texto.
 
-                REQUISITO MANDATORIO:
-                Debes incluir en tu respuesta la cadena exacta de coordenadas calculadas para esa fecha histórica en este formato estricto:
+                Datos de entrada: Nacimiento en ${ciudad} el día ${fechaStr} a las ${horaStr}. Fecha actual: ${fechaHoy}.
+
+                REQUISITO DE ESTRUCTURA:
+                Debes iniciar tu respuesta con la siguiente etiqueta técnica exacta para pasar los datos al mapa gráfico:
                 COORDENADAS_REALES(Asc:VALOR,Sol:VALOR,Luna:VALOR,Mer:VALOR,Ven:VALOR,Mar:VALOR,Jup:VALOR,Sat:VALOR,Ura:VALOR,Nep:VALOR,Plu:VALOR)
-                Reemplaza VALOR por la longitud elíptica absoluta del planeta (de 0 a 360 grados). Por ejemplo, si el planeta está a 5° de Escorpio, su valor es 215. Calclula con el máximo rigor.
+                Calcula con el máximo rigor las posiciones planetarias en longitud elíptica absoluta (0 a 360 grados) para esa fecha exacta.
 
-                REPORTE NARRATIVO:
-                Redacta bajo el enfoque antroposófico de Rudolf Steiner, sin predicciones baratas ni alarmismos, separando el texto con estas etiquetas:
-                [NATAL] Texto profundo de la esencia fija de nacimiento.
-                [VIDA] Consejo de mindfulness personal para el día de hoy ${fechaHoy}.
-                [LABORAL] Guía para la voluntad y el pensamiento en el trabajo hoy.
+                Luego, genera los bloques de texto utilizando exactamente estas etiquetas:
+
+                [NATAL] 
+                Escribe una interpretación profunda y breve (frases cortas y contundentes) de su esencia natal fija basada en su Sol, Luna y Ascendente.
+
+                [VIDA]
+                Escribe el consejo con presencia y mindfulness para su vida personal el día de hoy (${fechaHoy}).
+
+                [LABORAL]
+                Escribe la guía centrada para el pensamiento ordenado y la acción consciente en sus tareas profesionales de hoy.
             `;
 
             try {
@@ -441,7 +441,6 @@
 
                 let datosCorregidos = { ...datosIniciales };
                 
-                // Captura el formato sin importar lo que ponga la IA alrededor usando RegEx
                 const regex = /COORDENADAS_REALES\(([^)]+)\)/;
                 const match = textoCompleto.match(regex);
                 
@@ -474,17 +473,17 @@
 
                 return {
                     datosAstronomicos: datosCorregidos,
-                    natal: natalPart || "Tu mapa estelar se ha estabilizado dinámicamente.",
-                    vida: vidaPart || "Fluye con serenidad en tu espacio interior hoy.",
-                    laboral: laboralPart || "Proyecta tu voluntad consciente en tus tareas profesionales."
+                    natal: natalPart || "El mapa traza la estructura de tu identidad.",
+                    vida: vidaPart || "Presencia y centro en el espacio cotidiano.",
+                    laboral: laboralPart || "Orden en el pensar, claridad en la acción profesional."
                 };
             } catch (error) {
-                console.error("Error en conexión estelar:", error);
+                console.error("Error en conexión:", error);
                 return {
                     datosAstronomicos: datosIniciales,
-                    natal: "Se detectó una fluctuación astral temporal. Verifica la conexión de tu API Key.",
-                    vida: "Respira hondo y busca tu equilibrio central.",
-                    laboral: "Estructura tu jornada con paciencia y paso firme."
+                    natal: "Alineación temporal en proceso. Verifica las credenciales de acceso.",
+                    vida: "Mantén la atención en el presente.",
+                    laboral: "Claridad y estructura en las tareas pendientes."
                 };
             }
         }
@@ -506,7 +505,7 @@
 
             localStorage.setItem('user_cosmos_key', apiKeyIngresada);
             boton.disabled = true;
-            boton.innerText = "Sincronizando Efemérides NASA...";
+            boton.innerText = "Alineando efemérides...";
 
             const [latStr, lonStr, tzStr, nombreCiudad] = lugarSelect.split(',');
             let datosCosmicos = calcularEfeméridesProvisionales(fecha, hora, parseFloat(latStr), parseFloat(lonStr), parseFloat(tzStr));
@@ -514,7 +513,6 @@
             const fechaHoyText = obtenerFechaActualFormateada();
             document.getElementById('fecha-actual-badge').innerText = fechaHoyText;
 
-            // Renderizado Proporcional Inmediato
             document.getElementById('lbl-solar').innerText = "Sol: " + obtenerSignoDeGrado(datosCosmicos.Sol.deg);
             document.getElementById('lbl-lunar').innerText = "Luna: " + obtenerSignoDeGrado(datosCosmicos.Luna.deg);
             document.getElementById('lbl-ascendente').innerText = "Asc: " + datosCosmicos.Ascendente.nombre;
@@ -523,10 +521,8 @@
             document.getElementById('pantalla-bienvenida').style.display = 'none';
             document.getElementById('pantalla-dashboard').style.display = 'flex';
 
-            // Consulta a la IA con Extractor Robusto
             const respuestaIA = await solicitarInterpretacionYCoordenadasIA(datosCosmicos, fecha, hora, nombreCiudad, fechaHoyText, apiKeyIngresada);
 
-            // Redibujado de Alta Precisión Definitivo
             datosCosmicos = respuestaIA.datosAstronomicos;
             document.getElementById('lbl-solar').innerText = "Sol: " + obtenerSignoDeGrado(datosCosmicos.Sol.deg);
             document.getElementById('lbl-lunar').innerText = "Luna: " + obtenerSignoDeGrado(datosCosmicos.Luna.deg);
@@ -534,7 +530,6 @@
             
             dibujarMandalaUniversal(datosCosmicos);
 
-            // Inyección de Prosa
             document.getElementById('texto-natal-fijo').innerHTML = respuestaIA.natal;
             document.getElementById('consejo-vida').innerHTML = respuestaIA.vida;
             document.getElementById('consejo-laboral').innerHTML = respuestaIA.laboral;
