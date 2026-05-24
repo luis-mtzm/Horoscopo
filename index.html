@@ -106,6 +106,15 @@
             font-style: italic;
         }
 
+        /* Fuerza al cuadro de verificación a mantener su tamaño nativo pequeño */
+        .checkbox-fix {
+            width: auto !important;
+            height: auto !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            cursor: pointer;
+        }
+
         button {
             width: 100%;
             padding: 14px;
@@ -273,9 +282,9 @@
                 <div class="ethical-text">
                     "Esta guía no predice el futuro ni busca entretener. Es un espejo para tu desarrollo consciente. Al presionar el botón, te comprometes a recibir esta información con honestidad, apertura y madurez."
                 </div>
-                <div style="text-align: left; display: flex; align-items: center; gap: 10px; font-size: 0.85rem; color: #4a3b32;">
-                    <input type="checkbox" id="compromiso-check" required style="width: auto; cursor: pointer;">
-                    <label for="compromiso-check" style="display: inline; text-transform: none; letter-spacing: normal; cursor: pointer;">
+                <div style="text-align: left; display: flex; align-items: center; gap: 12px; font-size: 0.85rem; color: #4a3b32;">
+                    <input type="checkbox" id="compromiso-check" class="checkbox-fix" required>
+                    <label for="compromiso-check" style="display: inline; text-transform: none; letter-spacing: normal; cursor: pointer; margin: 0;">
                         Asumo este espacio con respeto y veracidad.
                     </label>
                 </div>
