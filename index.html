@@ -275,7 +275,7 @@
                     <option value="" disabled selected>¿Desde qué espacio consultas hoy?</option>
                     <option value="Busco claridad y estructura para un desafío actual">Busco claridad y estructura para un desafío actual</option>
                     <option value="Deseo comprender un proceso de tensión personal o laboral">Deseo comprender un proceso de tensión personal o laboral</option>
-                    <option value="Busco un espacio de silencio, introspección y meditación seria">Busco un espacio de silencio, introspección y meditación seria</option>
+                    <option value="Busco un espacio de silencio, introspección and meditación seria">Busco un espacio de silencio, introspección y meditación seria</option>
                 </select>
             </div>
 
@@ -328,7 +328,6 @@
     </div>
 
     <script>
-        // MODELO OFICIAL ESTABLE DE PRODUCCIÓN GLOBAL
         const MODEL_NAME = "gemini-1.5-flash"; 
         const signos = ["Aries", "Tauro", "Géminis", "Cáncer", "Leo", "Virgo", "Libra", "Escorpio", "Sagitario", "Capricornio", "Acuario", "Piscis"];
         const glifos = { Sol: "☉", Luna: "☽", Mercurio: "☿", Venus: "♀", Marte: "♂", Jupiter: "♃", Saturno: "♄", Urano: "♅", Neptuno: "♆", Pluto: "♇" };
@@ -381,7 +380,6 @@
                 svg.innerHTML += `<text x="${cx + (rExt - 12) * Math.cos(aRadTexto)}" y="${cy + (rExt - 12) * Math.sin(aRadTexto)}" font-family='Georgia' font-size='8.5' fill='#a1887f' text-anchor='middle' alignment-baseline='central'>${signos[i].substring(0,2)}</text>`;
             }
 
-            // FUNCIÓN REPARADA Y PROTEGIDA CONTRA ERRORES DE SINTAXIS
             for (let i = 0; i < 12; i++) {
                 let degCuspide = datos.Cuspides[i];
                 let aRadCuspide = transformarAnguloFijo(degCuspide);
@@ -452,7 +450,7 @@
             
             const prompt = `
                 Tu identidad: Eres un consultor astrológico serio, profesional y elegante. Al mismo tiempo eres cálido y cercano. Te diriges al usuario estrictamente de "tú" (tuteo). No eres informal, pero tampoco distante. Te expresas con profundidad sin ser complicado o rebuscado.
-                Tu lenguaje: Poético pero preciso. Prefieres las frases corta y contundentes sobre los párrafos largos. Cuidas mucho cada palabra. Evitas por completo el lenguaje de ventas, la urgencia forzada y las frases hechas del mundo espiritual popular.
+                Tu lenguaje: Poético pero preciso. Prefieres las frases cortas y contundentes sobre los párrafos largos. Cuidad mucho cada palabra. Evitas por completo el lenguaje de ventas, la urgencia forzada y las frases hechas del mundo espiritual popular.
                 Tus valores: Integridad, coherencia y autenticidad. Tratas a tu audiencia como adultos conscientes en una búsqueda espiritual seria que quieren desarrollarse con rigor, estructura y amor. Nunca suenas desesperado por convencer, evitas las metáforas excesivas y jamás eres superficial. No cites autores ni nombres académicos.
                 Contexto de intención: El usuario ha declarado conscientemente que entra a este espacio con la siguiente intención real: "${intencionText}". Enmarca tus consejos sutilmente hacia esa necesidad de su conciencia.
 
@@ -544,7 +542,6 @@
             }
         }
 
-        // CONTROLADOR DE INICIALIZACIÓN PROTEGIDO CONTRA ERRORES DE CARGA
         document.addEventListener('DOMContentLoaded', () => {
             const form = document.getElementById('horoscopo-form');
             if (!form) return;
