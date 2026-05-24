@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tu Guía Diaria</title>
     <style>
-        /* ESTILOS BASE Y PALETA WALDORF/PASTEL ELEGANTE */
+        /* ESTILOS BASE Y PALETA PASTEL ELEGANTE */
         body {
             font-family: 'Georgia', serif;
             background: linear-gradient(135deg, #fff5f5 0%, #fff9f3 100%);
@@ -106,7 +106,7 @@
             font-style: italic;
         }
 
-        /* Fuerza al cuadro de verificación a mantener su tamaño nativo pequeño */
+        /* Fuerza a la casilla a no estirarse por completo */
         .checkbox-fix {
             width: auto !important;
             height: auto !important;
@@ -284,7 +284,7 @@
                 </div>
                 <div style="text-align: left; display: flex; align-items: center; gap: 12px; font-size: 0.85rem; color: #4a3b32;">
                     <input type="checkbox" id="compromiso-check" class="checkbox-fix" required>
-                    <label for="compromiso-check" style="display: inline; text-transform: none; letter-spacing: normal; cursor: pointer; margin: 0;">
+                    <label for="compromiso-check" style="display: inline; text-transform: none; letter-spacing: normal; cursor: pointer; margin: 0; font-family: inherit; color: inherit;">
                         Asumo este espacio con respeto y veracidad.
                     </label>
                 </div>
@@ -342,7 +342,6 @@
             return signos[Math.floor((longitud % 360) / 30)];
         }
 
-        // ESTIMACIÓN DE RESPALDO DE GEOMETRÍA FIJA
         function generarDatosEstructuraBase(fechaStr) {
             const [ano, mes, dia] = fechaStr.split('-').map(Number);
             let solDefault = 85; let lunaDefault = 191; let ascDefault = 185; 
@@ -357,23 +356,19 @@
             };
         }
 
-        // NUEVO MOTOR GRÁFICO ESTILO ASTRODIENST: ZODIACO EXTERIOR FIJO (0° ARIES A LA DERECHA) y CASAS PLÁCIDUS ROTATORIAS
         function dibujarMandalaAstrodienst(datos) {
             const svg = document.getElementById('canvas-carta');
             svg.innerHTML = '';
             const cx = 150, cy = 150, rExt = 130, rInt = 105, rCent = 32;
 
-            // Círculos concéntricos base
             svg.innerHTML += `<circle cx="${cx}" cy="${cy}" r="${rExt}" fill="none" stroke="#d4b296" stroke-width="1.5" />`;
             svg.innerHTML += `<circle cx="${cx}" cy="${cy}" r="${rInt}" fill="#fffdfa" stroke="#e6d5cb" stroke-width="1" />`;
             svg.innerHTML += `<circle cx="${cx}" cy="${cy}" r="${rCent}" fill="#fff9f3" stroke="#e6d5cb" stroke-width="1" />`;
 
-            // Transformador angular definitivo: 0° Aries inicia a la derecha (0 radianes) y corre anti-horario (levógiro)
             function transformarAnguloFijo(gradosZodiacales) {
                 return (-gradosZodiacales) * (Math.PI / 180); 
             }
 
-            // 1. Dibujar los 12 gajos FIJOS del Zodiaco exterior (Estructura Arquetípica Inmutable)
             for (let i = 0; i < 12; i++) {
                 let degSignoBase = i * 30;
                 let aRadLinea = transformarAnguloFijo(degSignoBase);
@@ -383,12 +378,12 @@
                 svg.innerHTML += `<text x="${cx + (rExt - 12) * Math.cos(aRadTexto)}" y="${cy + (rExt - 12) * Math.sin(aRadTexto)}" font-family='Georgia' font-size='8.5' fill='#a1887f' text-anchor='middle' alignment-baseline='central'>${signos[i].substring(0,2)}</text>`;
             }
 
-            // 2. Dibujar las líneas de las casas de PLÁCIDUS (Vectores independientes móviles en el centro)
+            // CORRECCIÓN CLAVE DE SINTAXIS EN ESTA LÍNEA (LÍNEA 256 REPARADA)
             for (let i = 0; i < 12; i++) {
                 let degCuspide = datos.Cuspides[i];
                 let aRadCuspide = transformarAnguloFijo(degCuspide);
                 
-                let esEjeEstructural = (i === 0 || i === 9); // C1 (AC) y C10 (MC)
+                let esEjeEstructural = (i === 0 || i === 9); 
                 let colorLinea = esEjeEstructural ? "#b38463" : "#ebdcd3";
                 let grosor = esEjeEstructural ? "1.8" : "1";
                 let punteado = esEjeEstructural ? "none" : "2,2";
@@ -396,14 +391,12 @@
                 svg.innerHTML += `<line x1="${cx + rCent * Math.cos(aRadCuspide)}" y1="${cy + rCent * Math.sin(aRadCuspide)}" x2="${cx + rInt * Math.cos(aRadCuspide)}" y2="${cy + rInt * Math.sin(aRadCuspide)}" stroke="${colorLinea}" stroke-width="${grosor}" stroke-dasharray="${punteado}" />`;
             }
 
-            // 3. Trazar la línea horizontal de la visual del Ascendente (Flecha izquierda de control)
             let anguloACReal = transformarAnguloFijo(datos.Ascendente.deg);
             let anguloDCReal = transformarAnguloFijo((datos.Ascendente.deg + 180) % 360);
             
             svg.innerHTML += `<line x1="${cx + rInt * Math.cos(anguloACReal)}" y1="${cy + rInt * Math.sin(anguloACReal)}" x2="${cx + rInt * Math.cos(anguloDCReal)}" y2="${cy + rInt * Math.sin(anguloDCReal)}" stroke="#c99e7f" stroke-width="1.5" />`;
             svg.innerHTML += `<polygon points="${cx + rInt * Math.cos(anguloACReal)},${cy + rInt * Math.sin(anguloACReal)} ${cx + (rInt-8) * Math.cos(anguloACReal + 0.05)},${cy + (rInt-8) * Math.sin(anguloACReal + 0.05)} ${cx + (rInt-8) * Math.cos(anguloACReal - 0.05)},${cy + (rInt-8) * Math.sin(anguloACReal - 0.05)}" fill="#c99e7f" />`;
 
-            // Mapeo planetario con radios concéntricos para evitar colisiones visuales
             const astros = [
                 { id: 'Sol', deg: datos.Sol.deg, sim: glifos.Sol, r: rInt - 12 },
                 { id: 'Luna', deg: datos.Luna.deg, sim: glifos.Luna, r: rInt - 24 },
@@ -417,7 +410,6 @@
                 { id: 'Pluto', deg: datos.Pluto.deg, sim: glifos.Pluto, r: rInt - 60 }
             ];
 
-            // Matriz de Aspectos Mayores de 10 cuerpos celestes
             for (let i = 0; i < astros.length; i++) {
                 for (let j = i + 1; j < astros.length; j++) {
                     let diff = Math.abs(astros[i].deg - astros[j].deg);
@@ -437,7 +429,6 @@
                 }
             }
 
-            // Pintado de Glifos vectoriales
             astros.forEach(astro => {
                 let aRad = transformarAnguloFijo(astro.deg);
                 let xp = cx + astro.r * Math.cos(aRad), yp = cy + astro.r * Math.sin(aRad);
@@ -453,7 +444,6 @@
             return new Date().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
         }
 
-        // CONEXIÓN ROBUSTA CON GEMINI: EXIGE TUTEO, FILTRO DE INTENCIÓN Y PASO DE EFEMÉRIDES PLÁCIDUS REALES
         async function solicitarInterpretacionYPlacidusIA(datosIniciales, fechaStr, horaStr, ciudad, intencionText, fechaHoy, apiKeyDinamica) {
             const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${apiKeyDinamica}`;
             
@@ -494,7 +484,6 @@
 
                 let datosCorregidos = { ...datosIniciales };
                 
-                // Extractor de datos elípticos de Plácidus por RegEx
                 const regex = /SISTEMA_PLACIDUS_REAL\(([^)]+)\)/;
                 const match = textoCompleto.match(regex);
                 
@@ -552,7 +541,6 @@
             }
         }
 
-        // CONTROLADOR DEL FORMULARIO
         document.getElementById('horoscopo-form').addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -577,7 +565,6 @@
             const fechaHoyText = obtenerFechaActualFormateada();
             document.getElementById('fecha-actual-badge').innerText = fechaHoyText;
 
-            // Renderizado Estructural Inicial Proporcional
             document.getElementById('lbl-solar').innerText = "Sol: " + obtenerSignoDeGrado(datosCosmicos.Sol.deg);
             document.getElementById('lbl-lunar').innerText = "Luna: " + obtenerSignoDeGrado(datosCosmicos.Luna.deg);
             document.getElementById('lbl-ascendente').innerText = "Asc: " + datosCosmicos.Ascendente.nombre;
@@ -586,10 +573,8 @@
             document.getElementById('pantalla-bienvenida').style.display = 'none';
             document.getElementById('pantalla-dashboard').style.display = 'flex';
 
-            // Consulta a la IA con el manifiesto de voz y filtro ético inyectado
             const respuestaIA = await solicitarInterpretacionYPlacidusIA(datosCosmicos, fecha, hora, nombreCiudad, intencionText, fechaHoyText, apiKeyIngresada);
 
-            // Redibujado Definitivo Asimétrico Plácidus Real al 100% de coincidencia con AstroDienst
             datosCosmicos = respuestaIA.datosAstronomicos;
             document.getElementById('lbl-solar').innerText = "Sol: " + obtenerSignoDeGrado(datosCosmicos.Sol.deg);
             document.getElementById('lbl-lunar').innerText = "Luna: " + obtenerSignoDeGrado(datosCosmicos.Luna.deg);
@@ -597,7 +582,6 @@
             
             dibujarMandalaAstrodienst(datosCosmicos);
 
-            // Inyección de Prosa Corta y Contundente (Tuteo Activo)
             document.getElementById('texto-natal-fijo').innerHTML = respuestaIA.natal;
             document.getElementById('consejo-vida').innerHTML = respuestaIA.vida;
             document.getElementById('consejo-laboral').innerHTML = respuestaIA.laboral;
