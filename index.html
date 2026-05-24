@@ -280,6 +280,97 @@
             5%, 28%       { opacity: 1; transform: translateY(0); }
         }
 
+        /* Sección de equilibrio energético (tripartición) */
+        .equilibrio-section {
+            margin-top: 22px;
+            padding-top: 20px;
+            border-top: 1px dashed rgba(212, 175, 122, 0.3);
+        }
+        .equilibrio-subtitulo {
+            font-size: 0.8rem;
+            color: #d4af7a;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin: 14px 0 10px;
+            font-weight: normal;
+        }
+        .bar-container {
+            display: grid;
+            grid-template-columns: 92px 1fr 42px;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 7px;
+            font-size: 0.85rem;
+        }
+        .bar-label {
+            color: #c9b89a;
+            white-space: nowrap;
+        }
+        .bar-track {
+            height: 8px;
+            background-color: rgba(212, 175, 122, 0.12);
+            border-radius: 4px;
+            overflow: hidden;
+            border: 1px solid rgba(212, 175, 122, 0.18);
+        }
+        .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #b88a5a 0%, #e8c896 100%);
+            border-radius: 4px;
+            transition: width 0.8s ease-out;
+            box-shadow: 0 0 8px rgba(232, 200, 150, 0.3);
+        }
+        .bar-percent {
+            color: #d4af7a;
+            font-size: 0.8rem;
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+        }
+        #texto-equilibrio {
+            margin-top: 14px;
+        }
+
+        /* Sección "Luna de hoy" en la columna derecha */
+        .luna-hoy-section {
+            margin-bottom: 22px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed rgba(212, 175, 122, 0.3);
+        }
+        .luna-hoy-display {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 10px 0 14px;
+            padding: 10px 14px;
+            background-color: rgba(212, 175, 122, 0.08);
+            border-radius: 12px;
+            border: 1px solid rgba(212, 175, 122, 0.2);
+        }
+        .luna-hoy-display svg {
+            flex-shrink: 0;
+            filter: drop-shadow(0 0 6px rgba(232, 200, 150, 0.35));
+        }
+        .luna-hoy-info {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+        .luna-hoy-info .luna-ubicacion {
+            color: #e8c896;
+            font-size: 1rem;
+        }
+        .luna-hoy-info .luna-ubicacion strong {
+            color: #f0e0c8;
+            font-weight: normal;
+            letter-spacing: 0.5px;
+        }
+        .luna-hoy-info .luna-fase {
+            color: #c9b89a;
+            font-size: 0.78rem;
+            font-style: italic;
+            letter-spacing: 0.5px;
+        }
+
         @media (max-width: 850px) {
             body { display: block; padding: 10px; }
             .dashboard-screen { flex-direction: column; width: 100%; margin: 0; }
@@ -359,11 +450,33 @@
             <div class="explicacion-natal-section">
                 <h2>Tu Esencia de Nacimiento</h2>
                 <div id="texto-natal-fijo" class="texto-bloque">Cargando lectura del alma...</div>
+
+                <div class="equilibrio-section">
+                    <h2>Tu Equilibrio</h2>
+                    <h3 class="equilibrio-subtitulo">Modalidad</h3>
+                    <div id="bars-modalidad"></div>
+                    <h3 class="equilibrio-subtitulo">Elemento</h3>
+                    <div id="bars-elemento"></div>
+                    <div id="texto-equilibrio" class="texto-bloque">—</div>
+                </div>
             </div>
         </div>
 
         <div class="column-right">
             <span id="fecha-actual-badge" class="date-badge">-</span>
+
+            <div class="luna-hoy-section">
+                <h2>🌙 La Luna Hoy</h2>
+                <div class="luna-hoy-display">
+                    <div id="luna-svg-container"></div>
+                    <div class="luna-hoy-info">
+                        <span class="luna-ubicacion"><strong id="luna-signo">—</strong> · <span id="luna-casa">—</span></span>
+                        <span class="luna-fase" id="luna-fase">—</span>
+                    </div>
+                </div>
+                <div id="texto-luna-hoy" class="texto-bloque">—</div>
+            </div>
+
             <h2>El Consejo del Día</h2>
             <div class="consejo-diario-contenedor">
                 <h3>🍃 Para la Vida Personal</h3>
@@ -640,6 +753,125 @@
         }
 
         // ============================================================
+        // TRIPARTICIÓN ENERGÉTICA (modalidad + elemento)
+        // ============================================================
+        /**
+         * Distribuye los puntos de la carta natal por modalidad y elemento.
+         * Ponderación: Sol, Luna y Ascendente cuentan doble (luminares + ángulo
+         * principal); el resto cuenta simple. Total = 15 puntos.
+         */
+        function calcularTriparticion(datos) {
+            const modalidades = [0, 0, 0];     // cardinal, fijo, mutable
+            const elementos   = [0, 0, 0, 0];  // fuego, tierra, aire, agua
+
+            const puntos = [
+                { deg: datos.Sol.deg,        peso: 2 },
+                { deg: datos.Luna.deg,       peso: 2 },
+                { deg: datos.Ascendente.deg, peso: 2 },
+                { deg: datos.Mercurio.deg,   peso: 1 },
+                { deg: datos.Venus.deg,      peso: 1 },
+                { deg: datos.Marte.deg,      peso: 1 },
+                { deg: datos.Jupiter.deg,    peso: 1 },
+                { deg: datos.Saturno.deg,    peso: 1 },
+                { deg: datos.Urano.deg,      peso: 1 },
+                { deg: datos.Neptuno.deg,    peso: 1 },
+                { deg: datos.Pluto.deg,      peso: 1 },
+                { deg: datos.MC.deg,         peso: 1 }
+            ];
+
+            let total = 0;
+            for (const p of puntos) {
+                const signoIdx = Math.floor(norm360(p.deg) / 30);
+                modalidades[signoIdx % 3] += p.peso;
+                elementos[signoIdx % 4]   += p.peso;
+                total += p.peso;
+            }
+            const pct = v => Math.round((v / total) * 100);
+
+            return {
+                modalidad: {
+                    cardinal: pct(modalidades[0]),
+                    fijo:     pct(modalidades[1]),
+                    mutable:  pct(modalidades[2])
+                },
+                elemento: {
+                    fuego:  pct(elementos[0]),
+                    tierra: pct(elementos[1]),
+                    aire:   pct(elementos[2]),
+                    agua:   pct(elementos[3])
+                }
+            };
+        }
+
+        /**
+         * Pinta un conjunto de barras horizontales en el contenedor dado.
+         * items: [{ label: string, pct: number }, ...]
+         */
+        function renderizarBarras(containerId, items) {
+            const c = document.getElementById(containerId);
+            if (!c) return;
+            c.innerHTML = items.map(it => `
+                <div class="bar-container">
+                    <span class="bar-label">${it.label}</span>
+                    <div class="bar-track"><div class="bar-fill" style="width: ${it.pct}%"></div></div>
+                    <span class="bar-percent">${it.pct}%</span>
+                </div>`).join('');
+        }
+
+        // ============================================================
+        // LUNA DE HOY (fase + ubicación en la carta)
+        // ============================================================
+        /**
+         * Nombre legible de la fase lunar a partir del ángulo de elongación
+         * Sol-Luna (0=nueva, 90=cuarto creciente, 180=llena, 270=cuarto menguante).
+         */
+        function nombreFaseLunar(faseDeg) {
+            const d = ((faseDeg % 360) + 360) % 360;
+            if (d < 22.5 || d > 337.5) return "Luna nueva";
+            if (d < 67.5)              return "Creciente";
+            if (d < 112.5)             return "Cuarto creciente";
+            if (d < 157.5)             return "Gibosa creciente";
+            if (d < 202.5)             return "Luna llena";
+            if (d < 247.5)             return "Gibosa menguante";
+            if (d < 292.5)             return "Cuarto menguante";
+            return "Menguante";
+        }
+
+        /**
+         * Genera un SVG de la luna con la porción iluminada correcta para la fase dada.
+         * El terminator es elíptico (físicamente correcto), no recto.
+         */
+        function moonPhaseSVG(faseDeg) {
+            const R = 18;
+            const d = ((faseDeg % 360) + 360) % 360;
+            const base = `<circle cx="0" cy="0" r="${R}" fill="#1a2540" stroke="#d4af7a" stroke-width="1"/>`;
+
+            // Luna nueva: solo disco oscuro
+            if (d < 1 || d > 359) {
+                return `<svg viewBox="-20 -20 40 40" width="42" height="42">${base}</svg>`;
+            }
+            // Luna llena: disco completamente iluminado
+            if (d > 179 && d < 181) {
+                return `<svg viewBox="-20 -20 40 40" width="42" height="42">
+                    ${base}
+                    <circle cx="0" cy="0" r="${R - 0.5}" fill="#f0e0c8"/>
+                </svg>`;
+            }
+
+            const rx     = R * Math.abs(Math.cos(d * Math.PI / 180));
+            const waxing = d < 180;
+            const phi    = waxing ? d : (360 - d);
+            const sweep  = phi < 90 ? 1 : 0;
+            const transform = waxing ? "" : 'transform="scale(-1, 1)"';
+            const path = `M 0,-${R} A ${R},${R} 0 0,1 0,${R} A ${rx.toFixed(2)},${R} 0 0,${sweep} 0,-${R} Z`;
+
+            return `<svg viewBox="-20 -20 40 40" width="42" height="42">
+                ${base}
+                <path ${transform} d="${path}" fill="#f0e0c8"/>
+            </svg>`;
+        }
+
+        // ============================================================
         // CÁLCULO DE TRÁNSITOS DEL DÍA
         // ============================================================
         /**
@@ -775,7 +1007,7 @@
         // ============================================================
         // INTERPRETACIÓN POR IA — solo interpretación, sin cálculos
         // ============================================================
-        async function solicitarInterpretacionIA(datos, transitos, intencionText, fechaHoy, apiKey) {
+        async function solicitarInterpretacionIA(datos, transitos, triparticion, intencionText, fechaHoy, apiKey) {
             const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${apiKey}`;
 
             // Resumen astronómico real, ya calculado en el cliente.
@@ -799,6 +1031,20 @@
                     `- ${t.transitor} en tránsito (${formatearGradoEnSigno(t.degT)}) hace ${t.aspecto} con ${t.natal} natal (orbe ${t.orbe.toFixed(2)}°)`
                   ).join('\n')
                 : "- (Sin aspectos exactos significativos entre los tránsitos de hoy y los puntos natales)";
+
+            // Resumen de tripartición (modalidad + elemento) ya calculado.
+            const m = triparticion.modalidad, el = triparticion.elemento;
+            const resumenTriparticion =
+                `Modalidad — Cardinal ${m.cardinal}% / Fijo ${m.fijo}% / Mutable ${m.mutable}%\n` +
+                `Elemento  — Fuego ${el.fuego}% / Tierra ${el.tierra}% / Aire ${el.aire}% / Agua ${el.agua}%`;
+
+            // Posición y ubicación de la Luna de hoy en la carta natal del usuario.
+            const lunaHoyDeg   = transitos.posicionesHoy.Luna.deg;
+            const lunaHoySigno = obtenerSignoDeGrado(lunaHoyDeg);
+            const lunaHoyCasa  = casaDePlaneta(lunaHoyDeg, datos.Cuspides);
+            const resumenLuna  =
+                `La Luna hoy está en ${formatearGradoEnSigno(lunaHoyDeg)}, ` +
+                `transitando la casa ${lunaHoyCasa} de la carta natal del usuario.`;
 
             const prompt = `
 Tu identidad: Eres un consultor astrológico serio, profesional y elegante. Al mismo tiempo eres cálido y cercano. Te diriges al usuario estrictamente de "tú" (tuteo). No eres informal, pero tampoco distante. Te expresas con profundidad sin ser complicado o rebuscado.
@@ -825,11 +1071,23 @@ ${resumenHoy}
 Aspectos exactos activos hoy (cuanto menor el orbe, más exacto y dominante el aspecto):
 ${resumenAspectos}
 
+DISTRIBUCIÓN ENERGÉTICA DE LA CARTA (tripartición ya calculada: porcentaje de los puntos del mapa que cae en cada modalidad y elemento, ponderando Sol/Luna/Ascendente al doble. Es la huella temperamental de fondo de la persona):
+${resumenTriparticion}
+
+LA LUNA HOY (su signo actual y la casa natal del usuario por la que está transitando ahora; la Luna marca el clima emocional y vivencial del día):
+${resumenLuna}
+
 INSTRUCCIONES DE SALIDA:
-Genera exactamente tres bloques narrativos, separados por las etiquetas exactas en mayúsculas y entre corchetes. No incluyas títulos, cálculos, listas técnicas, asteriscos ni markdown — solo prosa fluida dentro de cada bloque.
+Genera exactamente cinco bloques narrativos, separados por las etiquetas exactas en mayúsculas y entre corchetes. No incluyas títulos, cálculos, listas técnicas, asteriscos ni markdown — solo prosa fluida dentro de cada bloque.
 
 [NATAL]
 Interpretación profunda, contundente y breve de su esencia natal, basada en el conjunto Sol–Luna–Ascendente y los aspectos más relevantes del mapa que recibiste. No menciones aquí los tránsitos: este bloque es sobre quién es, no sobre lo que pasa hoy. Háblale directamente de tú. Máximo cuatro frases.
+
+[EQUILIBRIO]
+Interpretación específica de su distribución por modalidad y elemento, basada en los porcentajes concretos. Habla de qué se concentra y qué se diluye en su mezcla particular: qué pide, qué le sobra, qué tarea consciente le señala lo que tiene poco. No describas cada categoría por separado de forma genérica: articula la tensión y el don que produce SU combinación específica. No menciones porcentajes ni nombres técnicos como "cardinal" o "mutable" salvo si fluyen orgánicamente. Máximo cuatro frases.
+
+[LUNA_HOY]
+Reflexión breve sobre el color emocional y vivencial que pinta la Luna sobre su día, considerando el signo en que se encuentra y el área de vida (casa natal) que está atravesando. No nombres signos ni casas técnicamente — traduce su cualidad a una imagen viva de qué tipo de clima interior y qué territorio cotidiano se activa hoy. Máximo dos o tres frases.
 
 [VIDA]
 Consejo de centramiento y presencia para su vida personal el día de hoy (${fechaHoy}), enraizado en los tránsitos activos sobre su carta. Apóyate en los uno o dos aspectos más exactos de la lista de tránsitos para iluminar qué pide el cielo hoy de su vida personal. No nombres los planetas ni los aspectos técnicamente — traduce su cualidad a una sugerencia clara y vivencial. Responde a su intención declarada. Máximo cuatro frases.
@@ -851,14 +1109,18 @@ Guía con estructura para el pensamiento ordenado y la acción consciente en sus
             const json = await response.json();
             const textoCompleto = json?.candidates?.[0]?.content?.parts?.[0]?.text || "";
 
-            const natal   = textoCompleto.split('[NATAL]')[1]?.split('[VIDA]')[0]?.trim();
-            const vida    = textoCompleto.split('[VIDA]')[1]?.split('[LABORAL]')[0]?.trim();
-            const laboral = textoCompleto.split('[LABORAL]')[1]?.trim();
+            const natal       = textoCompleto.split('[NATAL]')[1]?.split('[EQUILIBRIO]')[0]?.trim();
+            const equilibrio  = textoCompleto.split('[EQUILIBRIO]')[1]?.split('[LUNA_HOY]')[0]?.trim();
+            const lunaHoy     = textoCompleto.split('[LUNA_HOY]')[1]?.split('[VIDA]')[0]?.trim();
+            const vida        = textoCompleto.split('[VIDA]')[1]?.split('[LABORAL]')[0]?.trim();
+            const laboral     = textoCompleto.split('[LABORAL]')[1]?.trim();
 
             return {
-                natal:   natal   || "El mapa traza la estructura de tu identidad.",
-                vida:    vida    || "Presencia y centro en el espacio cotidiano hoy.",
-                laboral: laboral || "Orden en el pensar, claridad en la acción profesional."
+                natal:      natal      || "El mapa traza la estructura de tu identidad.",
+                equilibrio: equilibrio || "Tu mezcla particular pide su propio camino.",
+                lunaHoy:    lunaHoy    || "La Luna acompaña tu día con su propio paso.",
+                vida:       vida       || "Presencia y centro en el espacio cotidiano hoy.",
+                laboral:    laboral    || "Orden en el pensar, claridad en la acción profesional."
             };
         }
 
@@ -921,6 +1183,31 @@ Guía con estructura para el pensamiento ordenado y la acción consciente en sus
                     document.getElementById('lbl-ascendente').innerText = "Asc: "  + datosCosmicos.Ascendente.nombre;
                     dibujarMandalaAstrodienst(datosCosmicos);
 
+                    // --- Renderizar barras de tripartición (cálculo instantáneo, sin IA) ---
+                    const triparticion = calcularTriparticion(datosCosmicos);
+                    renderizarBarras('bars-modalidad', [
+                        { label: 'Cardinal', pct: triparticion.modalidad.cardinal },
+                        { label: 'Fijo',     pct: triparticion.modalidad.fijo     },
+                        { label: 'Mutable',  pct: triparticion.modalidad.mutable  }
+                    ]);
+                    renderizarBarras('bars-elemento', [
+                        { label: '🔥 Fuego',  pct: triparticion.elemento.fuego  },
+                        { label: '⛰ Tierra', pct: triparticion.elemento.tierra },
+                        { label: '💨 Aire',   pct: triparticion.elemento.aire   },
+                        { label: '💧 Agua',   pct: triparticion.elemento.agua   }
+                    ]);
+
+                    // --- Renderizar "La Luna Hoy" (cálculo instantáneo, sin IA) ---
+                    const transitosCalc = calcularTransitosHoy(datosCosmicos);
+                    const lunaDegHoy    = transitosCalc.posicionesHoy.Luna.deg;
+                    const lunaSignoHoy  = obtenerSignoDeGrado(lunaDegHoy);
+                    const lunaCasaHoy   = casaDePlaneta(lunaDegHoy, datosCosmicos.Cuspides);
+                    const lunaFaseDeg   = Astronomy.MoonPhase(new Date());
+                    document.getElementById('luna-svg-container').innerHTML = moonPhaseSVG(lunaFaseDeg);
+                    document.getElementById('luna-signo').innerText = lunaSignoHoy;
+                    document.getElementById('luna-casa').innerText  = `en tu casa ${lunaCasaHoy}`;
+                    document.getElementById('luna-fase').innerText  = nombreFaseLunar(lunaFaseDeg);
+
                     document.getElementById('pantalla-bienvenida').style.display = 'none';
                     document.getElementById('pantalla-dashboard').style.display  = 'flex';
 
@@ -939,6 +1226,16 @@ Guía con estructura para el pensamiento ordenado y la acción consciente en sus
                         "Leyendo el orden de tu mapa interior",
                         "Sintonizando voz y silencio"
                     ]);
+                    document.getElementById('texto-equilibrio').innerHTML = loaderHTML([
+                        "Pesando los climas de tu mezcla",
+                        "Mirando qué se concentra y qué se diluye",
+                        "Reconociendo tu temperamento de fondo"
+                    ]);
+                    document.getElementById('texto-luna-hoy').innerHTML = loaderHTML([
+                        "Escuchando el paso de la Luna por tu mapa",
+                        "Sintiendo el clima emocional de hoy",
+                        "Mirando dónde aterriza la Luna en tu vida"
+                    ]);
                     document.getElementById('consejo-vida').innerHTML = loaderHTML([
                         "Consultando el cielo de hoy",
                         "Escuchando lo que el día sostiene",
@@ -951,13 +1248,15 @@ Guía con estructura para el pensamiento ordenado y la acción consciente en sus
                     ]);
 
                     const interp = await solicitarInterpretacionIA(
-                        datosCosmicos, calcularTransitosHoy(datosCosmicos),
+                        datosCosmicos, transitosCalc, triparticion,
                         intencionText, fechaHoyText, apiKeyIngresada
                     );
 
-                    document.getElementById('texto-natal-fijo').innerText = interp.natal;
-                    document.getElementById('consejo-vida').innerText     = interp.vida;
-                    document.getElementById('consejo-laboral').innerText  = interp.laboral;
+                    document.getElementById('texto-natal-fijo').innerText  = interp.natal;
+                    document.getElementById('texto-equilibrio').innerText  = interp.equilibrio;
+                    document.getElementById('texto-luna-hoy').innerText    = interp.lunaHoy;
+                    document.getElementById('consejo-vida').innerText      = interp.vida;
+                    document.getElementById('consejo-laboral').innerText   = interp.laboral;
 
                 } catch (err) {
                     console.error(err);
@@ -968,8 +1267,8 @@ Guía con estructura para el pensamiento ordenado y la acción consciente en sus
                     if (natalEl && natalEl.querySelector('.loader-cosmico')) {
                         natalEl.innerText = "La lectura interpretativa no pudo completarse (" + (err.message || err) + "). La carta mostrada arriba es astronómicamente correcta.";
                     }
-                    // Limpiar también los otros dos bloques si quedaron con loader
-                    ['consejo-vida','consejo-laboral'].forEach(id => {
+                    // Limpiar también los otros bloques si quedaron con loader
+                    ['texto-equilibrio','texto-luna-hoy','consejo-vida','consejo-laboral'].forEach(id => {
                         const el = document.getElementById(id);
                         if (el && el.querySelector('.loader-cosmico')) el.innerText = "—";
                     });
