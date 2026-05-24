@@ -112,6 +112,7 @@
             margin: 0 !important;
             padding: 0 !important;
             cursor: pointer;
+            display: inline-block;
         }
 
         button {
@@ -126,6 +127,7 @@
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(212, 154, 131, 0.3);
             margin-top: 5px;
+            display: block;
         }
 
         button:disabled {
@@ -377,14 +379,15 @@
                 svg.innerHTML += `<text x="${cx + (rExt - 12) * Math.cos(aRadTexto)}" y="${cy + (rExt - 12) * Math.sin(aRadTexto)}" font-family='Georgia' font-size='8.5' fill='#a1887f' text-anchor='middle' alignment-baseline='central'>${signos[i].substring(0,2)}</text>`;
             }
 
-            // REPARACIÓN COMPLETA Y SIMPLIFICADA DE LA LOGICA DEL TRAZADO
+            // REPARACIÓN DEFINITIVA DEL LOG DE EVALUACIÓN (SINTAXIS LIMPIA DE ERRORES DE DEDO)
             for (let i = 0; i < 12; i++) {
                 let degCuspide = datos.Cuspides[i];
                 let aRadCuspide = transformarAnguloFijo(degCuspide);
                 
-                let colorLinea = (i === 0 || i === 9) ? "#b38463" : "#ebdcd3";
-                let grosor = (i === 0 || i === 9) ? "1.8" : "1";
-                let punteado = (i === 0 || i === 9) ? "none" : "2,2";
+                let esPrincipal = (i === 0 || i === 9);
+                let colorLinea = esPrincipal ? "#b38463" : "#ebdcd3";
+                let grosor = esPrincipal ? "1.8" : "1";
+                let punteado = esPrincipal ? "none" : "2,2";
 
                 svg.innerHTML += `<line x1="${cx + rCent * Math.cos(aRadCuspide)}" y1="${cy + rCent * Math.sin(aRadCuspide)}" x2="${cx + rInt * Math.cos(aRadCuspide)}" y2="${cy + rInt * Math.sin(aRadCuspide)}" stroke="${colorLinea}" stroke-width="${grosor}" stroke-dasharray="${punteado}" />`;
             }
