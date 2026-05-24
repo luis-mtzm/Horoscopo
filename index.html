@@ -18,7 +18,7 @@
             align-items: center;
         }
 
-        /* PANTALLA 1: FORMULARIO DE INGRESO CON FILTRO ÉTICO */
+        /* PANTALLA 1: FORMULARIO DE INGRESO */
         .welcome-screen {
             background-color: rgba(255, 255, 255, 0.85);
             padding: 40px 30px;
@@ -98,7 +98,7 @@
             font-size: 1.1rem;
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(212, 154, 131, 0.3);
-            margin-top: 20px;
+            margin-top: 25px;
             display: block;
         }
 
@@ -208,7 +208,7 @@
 </head>
 <body>
 
-    <div id="pantalla-bienvenida" class="welcome-screen">
+    <div id="pantarma-bienvenida" class="welcome-screen">
         <h1>Tu Guía Diaria</h1>
         <p class="subtitle">Un espacio poético y preciso para sintonizar con la estructura de tu identidad astrológica real.</p>
         
@@ -344,10 +344,9 @@
                 let degCuspide = datos.Cuspides[i];
                 let aRadCuspide = transformarAnguloFijo(degCuspide);
                 
-                let esEje = (i === 0 || i === 9);
-                let colorLinea = esEje ? "#b38463" : "#ebdcd3";
-                let grosor = esEje ? "1.8" : "1";
-                let punteado = esEje ? "none" : "2,2";
+                let colorLinea = (i === 0 || i === 9) ? "#b38463" : "#ebdcd3";
+                let grosor = (i === 0 || i === 9) ? "1.8" : "1";
+                let punteado = (i === 0 || i === 9) ? "none" : "2,2";
 
                 svg.innerHTML += `<line x1="${cx + rCent * Math.cos(aRadCuspide)}" y1="${cy + rCent * Math.sin(aRadCuspide)}" x2="${cx + rInt * Math.cos(aRadCuspide)}" y2="${cy + rInt * Math.sin(aRadCuspide)}" stroke="${colorLinea}" stroke-width="${grosor}" stroke-dasharray="${punteado}" />`;
             }
@@ -410,7 +409,7 @@
             
             const prompt = `
                 Tu identidad: Eres un consultor astrológico serio, profesional y elegante. Al mismo tiempo eres cálido y cercano. Te diriges al usuario estrictamente de "tú" (tuteo). No eres informal, pero tampoco distante. Te expresas con profundidad sin ser complicado o rebuscado.
-                Tu lenguaje: Poético pero preciso. Prefieres las frases cortos y contundentes sobre los párrafos largos. Cuidas mucho cada palabra. Evitas por completo el lenguaje de ventas, la urgencia forzada y las frases hechas del mundo espiritual popular.
+                Tu lenguaje: Poético pero preciso. Prefieres las frases cortas y contundentes sobre los párrafos largos. Cuidad mucho cada palabra. Evitas por completo el lenguaje de ventas, la urgencia forzada y las frases hechas del mundo espiritual popular.
                 Tus valores: Integridad, coherencia y autenticidad. Tratas a tu audiencia como adultos conscientes en una búsqueda espiritual seria que quieren desarrollarse con rigor, estructura y amor. Nunca suenas desesperado por convencer, evitas las metáforas excesivas y jamás eres superficial. No cites autores ni nombres académicos.
                 Contexto de intención: El usuario ha declarado conscientemente que entra a este espacio con la siguiente intención real: "${intencionText}". Enmarca tus consejos sutilmente hacia esa necesidad de su conciencia.
 
@@ -427,7 +426,7 @@
                 Escribe una interpretación profunda, contundente y breve de su esencia natal de nacimiento basándote en su mapa elíptico. Háblale directamente de tú.
 
                 [VIDA]
-                Escribe el consejo de centramiento y presencia para su vida personal el día de hoy (${fechaHoy}), respondiendo a su intención declarada.
+                Escribe el consejo de centramiento y presencia para su vida personal el día de hoy (${fechaHoy}), respondiendo a tu intención declarada.
 
                 [LABORAL]
                 Escribe la guía con estructura para el pensamiento ordenado y la acción consciente en sus actividades profesionales de este día.
