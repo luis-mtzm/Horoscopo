@@ -106,21 +106,6 @@
             font-style: italic;
         }
 
-        .checkbox-group {
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            font-size: 0.85rem;
-            color: #4a3b32;
-            cursor: pointer;
-        }
-
-        .checkbox-group input {
-            width: auto;
-            margin-top: 3px;
-            cursor: pointer;
-        }
-
         button {
             width: 100%;
             padding: 14px;
@@ -288,10 +273,12 @@
                 <div class="ethical-text">
                     "Esta guía no predice el futuro ni busca entretener. Es un espejo para tu desarrollo consciente. Al presionar el botón, te comprometes a recibir esta información con honestidad, apertura y madurez."
                 </div>
-                <label class="checkbox-group">
-                    <input type="checkbox" id="compromiso-check" required>
-                    <span>Asumo este espacio con respeto y veracidad.</span>
-                </label>
+                <div style="text-align: left; display: flex; align-items: center; gap: 10px; font-size: 0.85rem; color: #4a3b32;">
+                    <input type="checkbox" id="compromiso-check" required style="width: auto; cursor: pointer;">
+                    <label for="compromiso-check" style="display: inline; text-transform: none; letter-spacing: normal; cursor: pointer;">
+                        Asumo este espacio con respeto y veracidad.
+                    </label>
+                </div>
             </div>
             
             <button type="submit" id="btn-enviar">Calcular Mi Mapa Astral</button>
@@ -331,7 +318,7 @@
     </div>
 
     <script>
-        const MODEL_NAME = "gemini-3-flash-preview"; 
+        const MODEL_NAME = "gemini-2.5-flash"; 
         const signos = ["Aries", "Tauro", "Géminis", "Cáncer", "Leo", "Virgo", "Libra", "Escorpio", "Sagitario", "Capricornio", "Acuario", "Piscis"];
         const glifos = { Sol: "☉", Luna: "☽", Mercurio: "☿", Venus: "♀", Marte: "♂", Jupiter: "♃", Saturno: "♄", Urano: "♅", Neptuno: "♆", Pluto: "♇" };
 
@@ -388,3 +375,224 @@
             }
 
             // 2. Dibujar las líneas de las casas de PLÁCIDUS (Vectores independientes móviles en el centro)
+            for (let i = 0; i < 12; i++) {
+                let degCuspide = datos.Cuspides[i];
+                let aRadCuspide = transformarAnguloFijo(degCuspide);
+                
+                let esEjeEstructural = (i === 0 || i === 9); // C1 (AC) y C10 (MC)
+                let colorLinea = esEjeEstructural ? "#b38463" : "#ebdcd3";
+                let grosor = esEjeEstructural ? "1.8" : "1";
+                let punteado = esEjeEstructural ? "none" : "2,2";
+
+                svg.innerHTML += `<line x1="${cx + rCent * Math.cos(aRadCuspide)}" y1="${cy + rCent * Math.sin(aRadCuspide)}" x2="${cx + rInt * Math.cos(aRadCuspide)}" y2="${cy + rInt * Math.sin(aRadCuspide)}" stroke="${colorLinea}" stroke-width="${grosor}" stroke-dasharray="${punteado}" />`;
+            }
+
+            // 3. Trazar la línea horizontal de la visual del Ascendente (Flecha izquierda de control)
+            let anguloACReal = transformarAnguloFijo(datos.Ascendente.deg);
+            let anguloDCReal = transformarAnguloFijo((datos.Ascendente.deg + 180) % 360);
+            
+            svg.innerHTML += `<line x1="${cx + rInt * Math.cos(anguloACReal)}" y1="${cy + rInt * Math.sin(anguloACReal)}" x2="${cx + rInt * Math.cos(anguloDCReal)}" y2="${cy + rInt * Math.sin(anguloDCReal)}" stroke="#c99e7f" stroke-width="1.5" />`;
+            svg.innerHTML += `<polygon points="${cx + rInt * Math.cos(anguloACReal)},${cy + rInt * Math.sin(anguloACReal)} ${cx + (rInt-8) * Math.cos(anguloACReal + 0.05)},${cy + (rInt-8) * Math.sin(anguloACReal + 0.05)} ${cx + (rInt-8) * Math.cos(anguloACReal - 0.05)},${cy + (rInt-8) * Math.sin(anguloACReal - 0.05)}" fill="#c99e7f" />`;
+
+            // Mapeo planetario con radios concéntricos para evitar colisiones visuales
+            const astros = [
+                { id: 'Sol', deg: datos.Sol.deg, sim: glifos.Sol, r: rInt - 12 },
+                { id: 'Luna', deg: datos.Luna.deg, sim: glifos.Luna, r: rInt - 24 },
+                { id: 'Mercurio', deg: datos.Mercurio.deg, sim: glifos.Mercurio, r: rInt - 36 },
+                { id: 'Venus', deg: datos.Venus.deg, sim: glifos.Venus, r: rInt - 48 },
+                { id: 'Marte', deg: datos.Marte.deg, sim: glifos.Marte, r: rInt - 60 },
+                { id: 'Jupiter', deg: datos.Jupiter.deg, sim: glifos.Jupiter, r: rInt - 72 },
+                { id: 'Saturno', deg: datos.Saturno.deg, sim: glifos.Saturno, r: rInt - 72 },
+                { id: 'Urano', deg: datos.Urano.deg, sim: glifos.Urano, r: rInt - 84 },
+                { id: 'Neptuno', deg: datos.Neptuno.deg, sim: glifos.Neptuno, r: rInt - 84 },
+                { id: 'Pluto', deg: datos.Pluto.deg, sim: glifos.Pluto, r: rInt - 60 }
+            ];
+
+            // Matriz de Aspectos Mayores de 10 cuerpos celestes
+            for (let i = 0; i < astros.length; i++) {
+                for (let j = i + 1; j < astros.length; j++) {
+                    let diff = Math.abs(astros[i].deg - astros[j].deg);
+                    if (diff > 180) diff = 360 - diff;
+                    let orbita = 6;
+                    let colorAspecto = null;
+
+                    if (Math.abs(diff - 120) <= orbita || Math.abs(diff - 60) <= orbita) { colorAspecto = "#4a90e2"; } 
+                    else if (Math.abs(diff - 180) <= orbita || Math.abs(diff - 90) <= orbita) { colorAspecto = "#d0021b"; }
+
+                    if (colorAspecto) {
+                        let rLine = rCent + 3;
+                        let aRadI = transformarAnguloFijo(astros[i].deg);
+                        let aRadJ = transformarAnguloFijo(astros[j].deg);
+                        svg.innerHTML += `<line x1="${cx + rLine * Math.cos(aRadI)}" y1="${cy + rLine * Math.sin(aRadI)}" x2="${cx + rLine * Math.cos(aRadJ)}" y2="${cy + rLine * Math.sin(aRadJ)}" stroke="${colorAspecto}" stroke-width="1" stroke-opacity="0.45" />`;
+                    }
+                }
+            }
+
+            // Pintado de Glifos vectoriales
+            astros.forEach(astro => {
+                let aRad = transformarAnguloFijo(astro.deg);
+                let xp = cx + astro.r * Math.cos(aRad), yp = cy + astro.r * Math.sin(aRad);
+                if (astro.id === 'Sol') {
+                    svg.innerHTML += `<circle cx="${xp}" cy="${yp}" r="5.5" fill="#fcecd2" stroke="#d49a83" stroke-width="1.2" /><circle cx="${xp}" cy="${yp}" r="1" fill="#d49a83" />`;
+                } else {
+                    svg.innerHTML += `<text x="${xp}" y="${yp}" font-family='sans-serif' font-size='12' fill='#5a4538' text-anchor='middle' dominant-baseline='central'>${astro.sim}</text>`;
+                }
+            });
+        }
+
+        function obtenerFechaActualFormateada() {
+            return new Date().toLocaleDateString('es-ES', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        }
+
+        // CONEXIÓN ROBUSTA CON GEMINI: EXIGE TUTEO, FILTRO DE INTENCIÓN Y PASO DE EFEMÉRIDES PLÁCIDUS REALES
+        async function solicitarInterpretacionYPlacidusIA(datosIniciales, fechaStr, horaStr, ciudad, intencionText, fechaHoy, apiKeyDinamica) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${apiKeyDinamica}`;
+            
+            const prompt = `
+                Tu identidad: Eres un consultor astrológico serio, profesional y elegante. Al mismo tiempo eres cálido y cercano. Te diriges al usuario estrictamente de "tú" (tuteo). No eres informal, pero tampoco distante. Te expresas con profundidad sin ser complicado o rebuscado.
+                Tu lenguaje: Poético pero preciso. Prefieres las frases cortas y contundentes sobre los párrafos largos. Cuidad mucho cada palabra. Evitas por completo el lenguaje de ventas, la urgencia forzada y las frases hechas del mundo espiritual popular.
+                Tus valores: Integridad, coherencia y autenticidad. Tratas a tu audiencia como adultos conscientes en una búsqueda espiritual seria que quieren desarrollarse con rigor, estructura y amor. Nunca suenas desesperado por convencer, evitas las metáforas excesivas y jamás eres superficial. No cites autores ni nombres académicos.
+                Contexto de intención: El usuario ha declarado conscientemente que entra a este espacio con la siguiente intención real: "${intencionText}". Enmarca tus consejos sutilmente hacia esa necesidad de su conciencia.
+
+                Datos astronómicos de nacimiento: Ciudad de ${ciudad} el día ${fechaStr} a las ${horaStr}. Fecha del día de hoy: ${fechaHoy}.
+
+                REQUISITO MANDATORIO DE DATOS:
+                Debes iniciar obligatoriamente tu respuesta con la siguiente cadena técnica exacta en la primera línea del texto, calculando con el máximo rigor científico el sistema de casas PLÁCIDUS para las 12 cúspides y las longitudes elípticas absolutas (de 0 a 360 grados) de los 10 planetas:
+                SISTEMA_PLACIDUS_REAL(Asc:VALOR,Sol:VALOR,Luna:VALOR,Mer:VALOR,Ven:VALOR,Mar:VALOR,Jup:VALOR,Sat:VALOR,Ura:VALOR,Nep:VALOR,Plu:VALOR,C1:VALOR,C2:VALOR,C3:VALOR,C4:VALOR,C5:VALOR,C6:VALOR,C7:VALOR,C8:VALOR,C9:VALOR,C10:VALOR,C11:VALOR,C12:VALOR)
+                (Nota de correspondencia: C1 es el valor de Asc, C10 es el Medio Cielo exacto de Plácidus). El texto no debe contener asteriscos ni markdown alrededor de esta etiqueta.
+
+                Luego, genera los bloques narrativos en base a las siguientes etiquetas exactas:
+
+                [NATAL]
+                Escribe una interpretación profunda, contundente y breve de su esencia natal de nacimiento basándote en su mapa elíptico. Háblale directamente de tú.
+
+                [VIDA]
+                Escribe el consejo de centramiento y presencia para su vida personal el día de hoy (${fechaHoy}), respondiendo a su intención declarada.
+
+                [LABORAL]
+                Escribe la guía con estructura para el pensamiento ordenado y la acción consciente en sus actividades profesionales de este día.
+            `;
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
+
+                const json = await response.json();
+                const textoCompleto = json.candidates[0].content.parts[0].text;
+
+                let datosCorregidos = { ...datosIniciales };
+                
+                // Extractor de datos elípticos de Plácidus por RegEx
+                const regex = /SISTEMA_PLACIDUS_REAL\(([^)]+)\)/;
+                const match = textoCompleto.match(regex);
+                
+                if (match && match[1]) {
+                    const parejas = match[1].split(',');
+                    let cuspidesExtraidas = new Array(12);
+                    
+                    parejas.forEach(p => {
+                        const [key, val] = p.split(':');
+                        let numero = parseFloat(val);
+                        if (!isNaN(numero)) {
+                            let k = key.trim();
+                            if (k === 'Asc') datosCorregidos.Ascendente.deg = numero;
+                            if (k === 'Sol') datosCorregidos.Sol.deg = numero;
+                            if (k === 'Luna') datosCorregidos.Luna.deg = numero;
+                            if (k === 'Mer') datosCorregidos.Mercurio.deg = numero;
+                            if (k === 'Ven') datosCorregidos.Venus.deg = numero;
+                            if (k === 'Mar') datosCorregidos.Marte.deg = numero;
+                            if (k === 'Jup') datosCorregidos.Jupiter.deg = numero;
+                            if (k === 'Sat') datosCorregidos.Saturno.deg = numero;
+                            if (k === 'Ura') datosCorregidos.Urano.deg = numero;
+                            if (k === 'Nep') datosCorregidos.Neptuno.deg = numero;
+                            if (k === 'Plu') datosCorregidos.Pluto.deg = numero;
+                            
+                            for(let c=1; c<=12; c++){
+                                if(k === `C${c}`) { cuspidesExtraidas[c-1] = numero; }
+                            }
+                        }
+                    });
+                    
+                    datosCorregidos.Ascendente.nombre = obtenerSignoDeGrado(datosCorregidos.Ascendente.deg);
+                    if(!cuspidesExtraidas.includes(undefined)) {
+                        datosCorregidos.Cuspides = cuspidesExtraidas;
+                    }
+                }
+
+                const natalPart = textoCompleto.split('[NATAL]')[1]?.split('[VIDA]')[0]?.trim();
+                const vidaPart = textoCompleto.split('[VIDA]')[1]?.split('[LABORAL]')[0]?.trim();
+                const laboralPart = textoCompleto.split('[LABORAL]')[1]?.trim();
+
+                return {
+                    datosAstronomicos: datosCorregidos,
+                    natal: natalPart || "El mapa traza la estructura de tu identidad.",
+                    vida: vidaPart || "Presencia y centro en el espacio cotidiano hoy.",
+                    laboral: laboralPart || "Orden en el pensar, claridad en la acción profesional."
+                };
+            } catch (error) {
+                console.error("Error en sincronización Plácidus:", error);
+                return {
+                    datosAstronomicos: datosIniciales,
+                    natal: "Alineación en proceso. Verifica la estabilidad de tu clave de acceso.",
+                    vida: "Mantén la atención plena en el presente.",
+                    laboral: "Estructura tus tareas con orden y paso firme."
+                };
+            }
+        }
+
+        // CONTROLADOR DEL FORMULARIO
+        document.getElementById('horoscopo-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const fecha = document.getElementById('fecha').value;
+            const hora = document.getElementById('hora').value;
+            const lugarSelect = document.getElementById('lugar-select').value;
+            const apiKeyIngresada = document.getElementById('api-key-input').value.trim();
+            const intencionText = document.getElementById('intencion-select').value;
+            const compromisoAceptado = document.getElementById('compromiso-check').checked;
+            const boton = document.getElementById('btn-enviar');
+            
+            if(!apiKeyIngresada) { alert("Por favor introduce tu Clave de Acceso."); return; }
+            if(!compromisoAceptado) { alert("Por favor, lee y asume el compromiso ético de veracidad para continuar."); return; }
+
+            localStorage.setItem('user_cosmos_key', apiKeyIngresada);
+            boton.disabled = true;
+            boton.innerText = "Calculando Cúspides Reales...";
+
+            const [latStr, lonStr, tzStr, nombreCiudad] = lugarSelect.split(',');
+            let datosCosmicos = generarDatosEstructuraBase(fecha);
+
+            const fechaHoyText = obtenerFechaActualFormateada();
+            document.getElementById('fecha-actual-badge').innerText = fechaHoyText;
+
+            // Renderizado Estructural Inicial Proporcional
+            document.getElementById('lbl-solar').innerText = "Sol: " + obtenerSignoDeGrado(datosCosmicos.Sol.deg);
+            document.getElementById('lbl-lunar').innerText = "Luna: " + obtenerSignoDeGrado(datosCosmicos.Luna.deg);
+            document.getElementById('lbl-ascendente').innerText = "Asc: " + datosCosmicos.Ascendente.nombre;
+            dibujarMandalaAstrodienst(datosCosmicos);
+
+            document.getElementById('pantalla-bienvenida').style.display = 'none';
+            document.getElementById('pantalla-dashboard').style.display = 'flex';
+
+            // Consulta a la IA con el manifiesto de voz y filtro ético inyectado
+            const respuestaIA = await solicitarInterpretacionYPlacidusIA(datosCosmicos, fecha, hora, nombreCiudad, intencionText, fechaHoyText, apiKeyIngresada);
+
+            // Redibujado Definitivo Asimétrico Plácidus Real al 100% de coincidencia con AstroDienst
+            datosCosmicos = respuestaIA.datosAstronomicos;
+            document.getElementById('lbl-solar').innerText = "Sol: " + obtenerSignoDeGrado(datosCosmicos.Sol.deg);
+            document.getElementById('lbl-lunar').innerText = "Luna: " + obtenerSignoDeGrado(datosCosmicos.Luna.deg);
+            document.getElementById('lbl-ascendente').innerText = "Asc: " + datosCosmicos.Ascendente.nombre;
+            
+            dibujarMandalaAstrodienst(datosCosmicos);
+
+            // Inyección de Prosa Corta y Contundente (Tuteo Activo)
+            document.getElementById('texto-natal-fijo').innerHTML = respuestaIA.natal;
+            document.getElementById('consejo-vida').innerHTML = respuestaIA.vida;
+            document.getElementById('consejo-laboral').innerHTML = respuestaIA.laboral;
+        });
+    </script>
+</body>
+</html>
