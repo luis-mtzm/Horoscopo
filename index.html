@@ -87,34 +87,6 @@
             font-size: 0.9rem;
         }
 
-        /* DISEÑO DE CONTENEDOR ÉTICO */
-        .ethical-container {
-            background-color: rgba(245, 222, 209, 0.15);
-            border-radius: 14px;
-            padding: 15px;
-            margin-top: 20px;
-            margin-bottom: 20px;
-            text-align: left;
-            border: 1px solid rgba(226, 180, 154, 0.25);
-        }
-
-        .ethical-text {
-            font-size: 0.85rem;
-            line-height: 1.4;
-            color: #6e5a4f;
-            margin-bottom: 12px;
-            font-style: italic;
-        }
-
-        .checkbox-fix {
-            width: auto !important;
-            height: auto !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            cursor: pointer;
-            display: inline-block;
-        }
-
         button {
             width: 100%;
             padding: 14px;
@@ -126,7 +98,7 @@
             font-size: 1.1rem;
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(212, 154, 131, 0.3);
-            margin-top: 5px;
+            margin-top: 20px;
             display: block;
         }
 
@@ -277,18 +249,6 @@
                     <option value="Deseo comprender un proceso de tensión personal o laboral">Deseo comprender un proceso de tensión personal o laboral</option>
                     <option value="Busco un espacio de silencio, introspección y meditación seria">Busco un espacio de silencio, introspección y meditación seria</option>
                 </select>
-            </div>
-
-            <div class="ethical-container">
-                <div class="ethical-text">
-                    "Esta guía no predice el futuro ni busca entretener. Es un espejo para tu desarrollo consciente. Al presionar el botón, te comprometes a recibir esta información con honestidad, apertura y madurez."
-                </div>
-                <div style="text-align: left; display: flex; align-items: center; gap: 12px; font-size: 0.85rem; color: #4a3b32;">
-                    <input type="checkbox" id="compromiso-check" class="checkbox-fix" required>
-                    <label for="compromiso-check" style="display: inline; text-transform: none; letter-spacing: normal; cursor: pointer; margin: 0; font-family: inherit; color: inherit;">
-                        Asumo este espacio con respeto y veracidad.
-                    </label>
-                </div>
             </div>
             
             <button type="submit" id="btn-enviar">Calcular Mi Mapa Astral</button>
@@ -450,7 +410,7 @@
             
             const prompt = `
                 Tu identidad: Eres un consultor astrológico serio, profesional y elegante. Al mismo tiempo eres cálido y cercano. Te diriges al usuario estrictamente de "tú" (tuteo). No eres informal, pero tampoco distante. Te expresas con profundidad sin ser complicado o rebuscado.
-                Tu lenguaje: Poético pero preciso. Prefieres las frases cortas y contundentes sobre los párrafos largos. Cuidad mucho cada palabra. Evitas por completo el lenguaje de ventas, la urgencia forzada y las frases hechas del mundo espiritual popular.
+                Tu lenguaje: Poético pero preciso. Prefieres las frases cortos y contundentes sobre los párrafos largos. Cuidas mucho cada palabra. Evitas por completo el lenguaje de ventas, la urgencia forzada y las frases hechas del mundo espiritual popular.
                 Tus valores: Integridad, coherencia y autenticidad. Tratas a tu audiencia como adultos conscientes en una búsqueda espiritual seria que quieren desarrollarse con rigor, estructura y amor. Nunca suenas desesperado por convencer, evitas las metáforas excesivas y jamás eres superficial. No cites autores ni nombres académicos.
                 Contexto de intención: El usuario ha declarado conscientemente que entra a este espacio con la siguiente intención real: "${intencionText}". Enmarca tus consejos sutilmente hacia esa necesidad de su conciencia.
 
@@ -535,7 +495,7 @@
                 console.error("Error en sincronización Plácidus:", error);
                 return {
                     datosAstronomicos: datosIniciales,
-                    natal: "Alineación en proceso. Verifica la estabilidad de tu clave de acceso.",
+                    natal: "Tu mapa estelar se está consolidando con el cielo real. Un momento.",
                     vida: "Mantén la atención plena en el presente.",
                     laboral: "Estructura tus tareas con orden y paso firme."
                 };
@@ -554,11 +514,9 @@
                 const lugarSelect = document.getElementById('lugar-select').value;
                 const apiKeyIngresada = document.getElementById('api-key-input').value.trim();
                 const intencionText = document.getElementById('intencion-select').value;
-                const compromisoAceptado = document.getElementById('compromiso-check').checked;
                 const boton = document.getElementById('btn-enviar');
                 
                 if(!apiKeyIngresada) { alert("Por favor introduce tu Clave de Acceso."); return; }
-                if(!compromisoAceptado) { alert("Por favor, lee y asume el compromiso ético de veracidad para continuar."); return; }
 
                 localStorage.setItem('user_cosmos_key', apiKeyIngresada);
                 boton.disabled = true;
