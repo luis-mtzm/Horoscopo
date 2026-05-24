@@ -139,6 +139,53 @@
             margin: 20px auto;
             gap: 25px;
             box-sizing: border-box;
+            flex-direction: column;
+        }
+
+        /* Banda superior con la frase del día */
+        .frase-del-dia {
+            background-color: rgba(12, 22, 45, 0.72);
+            border: 1px solid rgba(212, 175, 122, 0.35);
+            border-radius: 24px;
+            padding: 24px 30px;
+            text-align: center;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+        }
+        .frase-del-dia-texto {
+            font-family: 'Georgia', serif;
+            font-size: 1.35rem;
+            color: #f0e0c8;
+            font-style: italic;
+            letter-spacing: 0.5px;
+            line-height: 1.4;
+            text-shadow: 0 0 20px rgba(232, 200, 150, 0.2);
+        }
+        .frase-del-dia-texto::before,
+        .frase-del-dia-texto::after {
+            content: "✦";
+            color: #d4af7a;
+            margin: 0 12px;
+            font-size: 0.9rem;
+            vertical-align: middle;
+            opacity: 0.8;
+        }
+        .frase-del-dia-fecha {
+            display: block;
+            color: #d4af7a;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 10px;
+            font-style: normal;
+        }
+
+        /* Contenedor de las dos columnas */
+        .dashboard-cuerpo {
+            display: flex;
+            gap: 25px;
+            box-sizing: border-box;
         }
 
         .column-left, .column-right {
@@ -371,9 +418,100 @@
             letter-spacing: 0.5px;
         }
 
+        /* Acordeón de análisis por signo */
+        .signos-section {
+            margin-top: 22px;
+            padding-top: 20px;
+            border-top: 1px dashed rgba(212, 175, 122, 0.3);
+        }
+        .signos-intro {
+            font-size: 0.85rem;
+            color: #c9b89a;
+            font-style: italic;
+            margin-bottom: 12px;
+        }
+        .signo-item {
+            background-color: rgba(212, 175, 122, 0.05);
+            border: 1px solid rgba(212, 175, 122, 0.2);
+            border-radius: 10px;
+            margin-bottom: 6px;
+            overflow: hidden;
+        }
+        .signo-header {
+            display: grid;
+            grid-template-columns: 28px 1fr auto 20px;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            cursor: pointer;
+            user-select: none;
+            transition: background-color 0.2s;
+        }
+        .signo-header:hover {
+            background-color: rgba(212, 175, 122, 0.1);
+        }
+        .signo-glifo {
+            font-size: 1.1rem;
+            color: #e8c896;
+            text-align: center;
+        }
+        .signo-nombre {
+            color: #f0e0c8;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+        .signo-resumen {
+            color: #d4af7a;
+            font-size: 0.78rem;
+            font-style: italic;
+        }
+        .signo-flecha {
+            color: #d4af7a;
+            font-size: 0.7rem;
+            transition: transform 0.3s;
+        }
+        .signo-item.abierto .signo-flecha {
+            transform: rotate(180deg);
+        }
+        .signo-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+        }
+        .signo-item.abierto .signo-body {
+            max-height: 1200px;
+        }
+        .signo-body-content {
+            padding: 4px 16px 16px;
+            border-top: 1px dashed rgba(212, 175, 122, 0.15);
+        }
+        .dimension-bloque {
+            margin-top: 14px;
+        }
+        .dimension-titulo {
+            font-size: 0.75rem;
+            color: #d4af7a;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin-bottom: 4px;
+        }
+        .dimension-dato {
+            color: #f0e0c8;
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+        }
+        .dimension-texto {
+            color: #e8d5ba;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            font-style: italic;
+        }
+
         @media (max-width: 850px) {
             body { display: block; padding: 10px; }
-            .dashboard-screen { flex-direction: column; width: 100%; margin: 0; }
+            .dashboard-screen { width: 100%; margin: 0; }
+            .dashboard-cuerpo { flex-direction: column; }
+            .frase-del-dia-texto { font-size: 1.1rem; }
             .welcome-screen { margin: 40px auto; }
         }
     </style>
@@ -435,6 +573,11 @@
     </div>
 
     <div id="pantalla-dashboard" class="dashboard-screen">
+        <div class="frase-del-dia">
+            <span id="frase-del-dia-texto" class="frase-del-dia-texto">—</span>
+            <span id="frase-del-dia-fecha" class="frase-del-dia-fecha">—</span>
+        </div>
+        <div class="dashboard-cuerpo">
         <div class="column-left">
             <div class="carta-natal-section">
                 <div class="triada-astrologica">
@@ -458,6 +601,12 @@
                     <h3 class="equilibrio-subtitulo">Elemento</h3>
                     <div id="bars-elemento"></div>
                     <div id="texto-equilibrio" class="texto-bloque">—</div>
+                </div>
+
+                <div class="signos-section">
+                    <h2>Las Doce Voces de tu Carta</h2>
+                    <p class="signos-intro">Cada signo te habla en tres dimensiones. Despliega el que quieras escuchar.</p>
+                    <div id="signos-acordeon"></div>
                 </div>
             </div>
         </div>
@@ -485,6 +634,7 @@
                 <h3>💼 Para el Ámbito Laboral</h3>
                 <div id="consejo-laboral" class="texto-bloque">Estructurando...</div>
             </div>
+        </div>
         </div>
     </div>
 
@@ -750,6 +900,258 @@
                 Cuspides:   casas.cuspides,
                 _meta:      { dateUTC, eps, LST }
             };
+        }
+
+        // ============================================================
+        // ANÁLISIS POR SIGNO (acordeón con interpretación bajo demanda)
+        // ============================================================
+        // Glifos visuales y regentes modernos de cada signo.
+        const glifosSigno = ['♈','♉','♊','♋','♌','♍','♎','♏','♐','♑','♒','♓'];
+        const regentesSigno = {
+            0: 'Marte',    1: 'Venus',   2: 'Mercurio', 3: 'Luna',
+            4: 'Sol',      5: 'Mercurio',6: 'Venus',    7: 'Pluto',
+            8: 'Jupiter',  9: 'Saturno', 10: 'Urano',   11: 'Neptuno'
+        };
+
+        /**
+         * Devuelve las tres dimensiones astrológicas de un signo en la carta:
+         *  1. En qué casa(s) cae el signo (o si está interceptado).
+         *  2. Qué signo cae en la casa "natural" del signo (Aries→1, Tauro→2, ...).
+         *  3. Dónde está el planeta regente (signo + casa).
+         */
+        function analizarSigno(idxSigno, datos) {
+            const cuspides = datos.Cuspides;
+            const planetasMap = {
+                Sol: datos.Sol, Luna: datos.Luna, Mercurio: datos.Mercurio,
+                Venus: datos.Venus, Marte: datos.Marte, Jupiter: datos.Jupiter,
+                Saturno: datos.Saturno, Urano: datos.Urano, Neptuno: datos.Neptuno,
+                Pluto: datos.Pluto
+            };
+
+            // 1) Casa(s) del signo
+            const casasConCuspide = [];
+            for (let i = 0; i < 12; i++) {
+                if (Math.floor(norm360(cuspides[i]) / 30) === idxSigno) casasConCuspide.push(i + 1);
+            }
+            let casaInfo;
+            if (casasConCuspide.length === 0) {
+                const casa = casaDePlaneta(idxSigno * 30 + 15, cuspides);
+                casaInfo = { tipo: 'interceptado', casa, casas: [casa] };
+            } else {
+                casaInfo = { tipo: 'cuspide', casa: casasConCuspide[0], casas: casasConCuspide };
+            }
+
+            // 2) Inquilino de la casa natural
+            const casaNatural = idxSigno + 1;
+            const signoEnCasaNatural = signos[Math.floor(norm360(cuspides[casaNatural - 1]) / 30)];
+
+            // 3) Posición del regente
+            const nombreRegente = regentesSigno[idxSigno];
+            const planetaRegente = planetasMap[nombreRegente];
+            const signoRegente = signos[Math.floor(norm360(planetaRegente.deg) / 30)];
+            const casaRegente = casaDePlaneta(planetaRegente.deg, cuspides);
+
+            return {
+                idx: idxSigno,
+                signo: signos[idxSigno],
+                glifo: glifosSigno[idxSigno],
+                casaInfo,
+                casaNatural,
+                signoEnCasaNatural,
+                regente: { nombre: nombreRegente, signo: signoRegente, casa: casaRegente, deg: planetaRegente.deg }
+            };
+        }
+
+        /**
+         * Texto descriptivo de la dimensión 1 (en qué casa(s) cae el signo).
+         */
+        function descripcionCasas(casaInfo) {
+            if (casaInfo.tipo === 'interceptado') {
+                return `Está interceptado en la casa ${casaInfo.casa}`;
+            }
+            return casaInfo.casas.length === 1
+                ? `Cae en la casa ${casaInfo.casas[0]}`
+                : `Cae en las casas ${casaInfo.casas.join(' y ')}`;
+        }
+
+        /**
+         * Llamada al LLM para interpretar las 3 dimensiones de UN signo.
+         * Devuelve { dim1, dim2, dim3 }.
+         */
+        async function interpretarSigno(analisis, apiKey) {
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${apiKey}`;
+            const a = analisis;
+
+            const prompt = `
+Tu identidad: Eres un consultor astrológico serio, profesional y elegante. Cálido y cercano. Te diriges al usuario de tú. Lenguaje poético pero preciso, frases cortas y contundentes. Sin lenguaje de ventas, sin urgencia forzada, sin frases hechas del mundo espiritual popular. Sin citar autores.
+
+Vas a interpretar las tres dimensiones que ${a.signo} ocupa en la carta natal del usuario. Cada dimensión es una pregunta astrológica distinta y merece su propia respuesta. No mezcles las dimensiones entre sí.
+
+DIMENSIÓN 1 — Dónde vive ${a.signo} en su mapa:
+${descripcionCasas(a.casaInfo)}.
+Significa: explica qué área de vida toma el color, la cualidad y el modo de ${a.signo} en esta persona específica. Sé concreto, no genérico.
+
+DIMENSIÓN 2 — Qué signo gobierna el territorio natural de ${a.signo}:
+La casa ${a.casaNatural} (que es el territorio donde naturalmente se expresan los asuntos de ${a.signo}) está bajo la influencia de ${a.signoEnCasaNatural}.
+Significa: explica cómo ese signo modula y matiza la expresión de los asuntos propios de ${a.signo} en esta persona. No describas el signo en abstracto: articula la interacción.
+
+DIMENSIÓN 3 — Dónde está el regente de ${a.signo}:
+${a.regente.nombre} (regente de ${a.signo}) se encuentra en ${a.regente.signo}, en la casa ${a.regente.casa}.
+Significa: explica dónde y cómo se canaliza la energía profunda de ${a.signo} en la vida de la persona, según el lugar donde su regente trabaja.
+
+INSTRUCCIONES DE SALIDA:
+Genera exactamente tres bloques, separados por las etiquetas exactas en mayúsculas entre corchetes. Solo prosa fluida, sin markdown, sin asteriscos, sin listas, sin títulos dentro de los bloques. Cada bloque máximo tres frases.
+
+[DIM1]
+(interpretación de la dimensión 1)
+
+[DIM2]
+(interpretación de la dimensión 2)
+
+[DIM3]
+(interpretación de la dimensión 3)
+            `.trim();
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+            });
+            if (!response.ok) {
+                const txt = await response.text();
+                throw new Error(`Gemini ${response.status}: ${txt.slice(0,180)}`);
+            }
+            const json = await response.json();
+            const texto = json?.candidates?.[0]?.content?.parts?.[0]?.text || "";
+            const dim1 = texto.split('[DIM1]')[1]?.split('[DIM2]')[0]?.trim();
+            const dim2 = texto.split('[DIM2]')[1]?.split('[DIM3]')[0]?.trim();
+            const dim3 = texto.split('[DIM3]')[1]?.trim();
+            return {
+                dim1: dim1 || "Esta dimensión pide su propia palabra.",
+                dim2: dim2 || "Esta dimensión pide su propia palabra.",
+                dim3: dim3 || "Esta dimensión pide su propia palabra."
+            };
+        }
+
+        /**
+         * Cache de interpretaciones en localStorage.
+         * Clave: el ID de carta natal (hash de fecha+hora+lat+lon) + el índice del signo.
+         */
+        function cacheKeySignos(perfilId) { return `signos_interp_${perfilId}`; }
+        function leerCacheSignos(perfilId) {
+            try { return JSON.parse(localStorage.getItem(cacheKeySignos(perfilId))) || {}; }
+            catch { return {}; }
+        }
+        function guardarCacheSigno(perfilId, idxSigno, interp) {
+            const c = leerCacheSignos(perfilId);
+            c[idxSigno] = interp;
+            try { localStorage.setItem(cacheKeySignos(perfilId), JSON.stringify(c)); } catch {}
+        }
+
+        /**
+         * Renderiza el acordeón completo (12 signos), inicialmente colapsados.
+         */
+        function renderizarAcordeonSignos(datos, perfilId, apiKey) {
+            const container = document.getElementById('signos-acordeon');
+            if (!container) return;
+            const cache = leerCacheSignos(perfilId);
+
+            const html = signos.map((nombre, i) => {
+                const a = analizarSigno(i, datos);
+                return `
+                    <div class="signo-item" data-idx="${i}">
+                        <div class="signo-header" onclick="toggleSigno(${i})">
+                            <span class="signo-glifo">${a.glifo}</span>
+                            <span class="signo-nombre">${a.signo}</span>
+                            <span class="signo-resumen">${descripcionCasas(a.casaInfo)}</span>
+                            <span class="signo-flecha">▼</span>
+                        </div>
+                        <div class="signo-body">
+                            <div class="signo-body-content" id="signo-content-${i}">
+                                <div class="dimension-bloque">
+                                    <div class="dimension-titulo">1 · ${a.signo} en tu carta</div>
+                                    <div class="dimension-dato">${descripcionCasas(a.casaInfo)}.</div>
+                                    <div class="dimension-texto" id="dim1-${i}">—</div>
+                                </div>
+                                <div class="dimension-bloque">
+                                    <div class="dimension-titulo">2 · El territorio natural de ${a.signo}</div>
+                                    <div class="dimension-dato">En tu casa ${a.casaNatural} está ${a.signoEnCasaNatural}.</div>
+                                    <div class="dimension-texto" id="dim2-${i}">—</div>
+                                </div>
+                                <div class="dimension-bloque">
+                                    <div class="dimension-titulo">3 · El regente de ${a.signo}</div>
+                                    <div class="dimension-dato">${a.regente.nombre} en ${a.regente.signo}, casa ${a.regente.casa}.</div>
+                                    <div class="dimension-texto" id="dim3-${i}">—</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+            }).join('');
+            container.innerHTML = html;
+
+            // Pintar interpretaciones cacheadas si existen
+            for (let i = 0; i < 12; i++) {
+                if (cache[i]) {
+                    document.getElementById(`dim1-${i}`).innerText = cache[i].dim1;
+                    document.getElementById(`dim2-${i}`).innerText = cache[i].dim2;
+                    document.getElementById(`dim3-${i}`).innerText = cache[i].dim3;
+                }
+            }
+
+            // Guardar datos en variable global para que toggleSigno tenga acceso
+            window._datosCartaActual = datos;
+            window._perfilIdActual = perfilId;
+            window._apiKeyActual = apiKey;
+        }
+
+        /**
+         * Abre o cierra un signo del acordeón. Si se abre por primera vez y no
+         * hay caché, dispara la llamada al LLM.
+         */
+        async function toggleSigno(idx) {
+            const item = document.querySelector(`.signo-item[data-idx="${idx}"]`);
+            if (!item) return;
+            const yaAbierto = item.classList.contains('abierto');
+            item.classList.toggle('abierto');
+            if (yaAbierto) return;
+
+            // Si los datos ya están pintados (caché), no llamar de nuevo.
+            const dim1El = document.getElementById(`dim1-${idx}`);
+            if (dim1El && dim1El.innerText !== "—") return;
+
+            const datos   = window._datosCartaActual;
+            const perfil  = window._perfilIdActual;
+            const apiKey  = window._apiKeyActual;
+            if (!datos || !apiKey) return;
+
+            const a = analizarSigno(idx, datos);
+
+            // Loaders en las tres dimensiones
+            const loaderHTML = `<div class="loader-cosmico">
+                <span class="loader-glifo">✦</span>
+                <div class="loader-textos">
+                    <span class="loader-texto">Escuchando esta voz de tu mapa</span>
+                    <span class="loader-texto">Leyendo lo que ${a.signo} pide decir</span>
+                    <span class="loader-texto">Trazando su lugar en tu carta</span>
+                </div>
+            </div>`;
+            document.getElementById(`dim1-${idx}`).innerHTML = loaderHTML;
+            document.getElementById(`dim2-${idx}`).innerHTML = loaderHTML;
+            document.getElementById(`dim3-${idx}`).innerHTML = loaderHTML;
+
+            try {
+                const interp = await interpretarSigno(a, apiKey);
+                document.getElementById(`dim1-${idx}`).innerText = interp.dim1;
+                document.getElementById(`dim2-${idx}`).innerText = interp.dim2;
+                document.getElementById(`dim3-${idx}`).innerText = interp.dim3;
+                guardarCacheSigno(perfil, idx, interp);
+            } catch (err) {
+                console.error(err);
+                const msg = "No se pudo completar (" + (err.message || err) + ")";
+                document.getElementById(`dim1-${idx}`).innerText = msg;
+                document.getElementById(`dim2-${idx}`).innerText = "—";
+                document.getElementById(`dim3-${idx}`).innerText = "—";
+            }
         }
 
         // ============================================================
@@ -1078,7 +1480,10 @@ LA LUNA HOY (su signo actual y la casa natal del usuario por la que está transi
 ${resumenLuna}
 
 INSTRUCCIONES DE SALIDA:
-Genera exactamente cinco bloques narrativos, separados por las etiquetas exactas en mayúsculas y entre corchetes. No incluyas títulos, cálculos, listas técnicas, asteriscos ni markdown — solo prosa fluida dentro de cada bloque.
+Genera exactamente seis bloques narrativos, separados por las etiquetas exactas en mayúsculas y entre corchetes. No incluyas títulos, cálculos, listas técnicas, asteriscos ni markdown — solo prosa fluida dentro de cada bloque.
+
+[FRASE]
+Una sola frase poética, máximo diez palabras, que destile la cualidad central del día según los tránsitos activos. No es slogan ni mandato: es un aforismo breve, contemplativo, que ancla emocionalmente al lector. Sin signos de exclamación. Sin la palabra "hoy". No comiences con artículo definido. Ejemplos del registro buscado: "La firmeza encuentra forma en lo cotidiano" / "Lo que se sostiene en silencio madura". Una sola línea.
 
 [NATAL]
 Interpretación profunda, contundente y breve de su esencia natal, basada en el conjunto Sol–Luna–Ascendente y los aspectos más relevantes del mapa que recibiste. No menciones aquí los tránsitos: este bloque es sobre quién es, no sobre lo que pasa hoy. Háblale directamente de tú. Máximo cuatro frases.
@@ -1109,6 +1514,7 @@ Guía con estructura para el pensamiento ordenado y la acción consciente en sus
             const json = await response.json();
             const textoCompleto = json?.candidates?.[0]?.content?.parts?.[0]?.text || "";
 
+            const frase       = textoCompleto.split('[FRASE]')[1]?.split('[NATAL]')[0]?.trim();
             const natal       = textoCompleto.split('[NATAL]')[1]?.split('[EQUILIBRIO]')[0]?.trim();
             const equilibrio  = textoCompleto.split('[EQUILIBRIO]')[1]?.split('[LUNA_HOY]')[0]?.trim();
             const lunaHoy     = textoCompleto.split('[LUNA_HOY]')[1]?.split('[VIDA]')[0]?.trim();
@@ -1116,6 +1522,7 @@ Guía con estructura para el pensamiento ordenado y la acción consciente en sus
             const laboral     = textoCompleto.split('[LABORAL]')[1]?.trim();
 
             return {
+                frase:      frase      || "El día se abre con su propia voz.",
                 natal:      natal      || "El mapa traza la estructura de tu identidad.",
                 equilibrio: equilibrio || "Tu mezcla particular pide su propio camino.",
                 lunaHoy:    lunaHoy    || "La Luna acompaña tu día con su propio paso.",
@@ -1178,6 +1585,15 @@ Guía con estructura para el pensamiento ordenado y la acción consciente en sus
                     // --- 3. Pintar inmediatamente la carta con datos reales ---
                     const fechaHoyText = obtenerFechaActualFormateada();
                     document.getElementById('fecha-actual-badge').innerText = fechaHoyText;
+                    document.getElementById('frase-del-dia-fecha').innerText = fechaHoyText;
+                    document.getElementById('frase-del-dia-texto').innerHTML = `<span class="loader-cosmico" style="justify-content:center">
+                        <span class="loader-glifo">✦</span>
+                        <div class="loader-textos" style="min-width:240px">
+                            <span class="loader-texto">Destilando la cualidad del día</span>
+                            <span class="loader-texto">Escuchando lo que el cielo anuncia</span>
+                            <span class="loader-texto">Encontrando la voz de hoy</span>
+                        </div>
+                    </span>`;
                     document.getElementById('lbl-solar').innerText      = "Sol: "  + obtenerSignoDeGrado(datosCosmicos.Sol.deg);
                     document.getElementById('lbl-lunar').innerText      = "Luna: " + obtenerSignoDeGrado(datosCosmicos.Luna.deg);
                     document.getElementById('lbl-ascendente').innerText = "Asc: "  + datosCosmicos.Ascendente.nombre;
@@ -1207,6 +1623,11 @@ Guía con estructura para el pensamiento ordenado y la acción consciente en sus
                     document.getElementById('luna-signo').innerText = lunaSignoHoy;
                     document.getElementById('luna-casa').innerText  = `en tu casa ${lunaCasaHoy}`;
                     document.getElementById('luna-fase').innerText  = nombreFaseLunar(lunaFaseDeg);
+
+                    // --- Acordeón de los 12 signos (interpretación bajo demanda con cache) ---
+                    // ID estable de la carta natal: hash simple de fecha+hora+lat+lon.
+                    const perfilId = `${fecha}_${hora}_${lat.toFixed(2)}_${lon.toFixed(2)}`.replace(/[^a-zA-Z0-9_]/g,'_');
+                    renderizarAcordeonSignos(datosCosmicos, perfilId, apiKeyIngresada);
 
                     document.getElementById('pantalla-bienvenida').style.display = 'none';
                     document.getElementById('pantalla-dashboard').style.display  = 'flex';
@@ -1252,6 +1673,7 @@ Guía con estructura para el pensamiento ordenado y la acción consciente en sus
                         intencionText, fechaHoyText, apiKeyIngresada
                     );
 
+                    document.getElementById('frase-del-dia-texto').innerText = interp.frase;
                     document.getElementById('texto-natal-fijo').innerText  = interp.natal;
                     document.getElementById('texto-equilibrio').innerText  = interp.equilibrio;
                     document.getElementById('texto-luna-hoy').innerText    = interp.lunaHoy;
@@ -1268,6 +1690,8 @@ Guía con estructura para el pensamiento ordenado y la acción consciente en sus
                         natalEl.innerText = "La lectura interpretativa no pudo completarse (" + (err.message || err) + "). La carta mostrada arriba es astronómicamente correcta.";
                     }
                     // Limpiar también los otros bloques si quedaron con loader
+                    const fraseEl = document.getElementById('frase-del-dia-texto');
+                    if (fraseEl && fraseEl.querySelector('.loader-cosmico')) fraseEl.innerText = "—";
                     ['texto-equilibrio','texto-luna-hoy','consejo-vida','consejo-laboral'].forEach(id => {
                         const el = document.getElementById(id);
                         if (el && el.querySelector('.loader-cosmico')) el.innerText = "—";
