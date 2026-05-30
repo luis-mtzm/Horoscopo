@@ -1693,4 +1693,31 @@ Guía con estructura para el pensamiento ordenado y la acción consciente en sus
                     document.getElementById('texto-natal-fijo').innerText  = interp.natal;
                     document.getElementById('texto-equilibrio').innerText  = interp.equilibrio;
                     document.getElementById('texto-luna-hoy').innerText    = interp.lunaHoy;
-                    document.getElementB
+                    document.getElementById('consejo-vida').innerText      = interp.vida;
+                    document.getElementById('consejo-laboral').innerText   = interp.laboral;
+
+                } catch (err) {
+                    console.error(err);
+                    errorBanner.textContent = "Algo no se pudo completar: " + (err.message || err);
+                    errorBanner.style.display = 'block';
+                    // También avisar en el dashboard si ya se mostró
+                    const natalEl = document.getElementById('texto-natal-fijo');
+                    if (natalEl && natalEl.querySelector('.loader-cosmico')) {
+                        natalEl.innerText = "La lectura interpretativa no pudo completarse (" + (err.message || err) + "). La carta mostrada arriba es astronómicamente correcta.";
+                    }
+                    // Limpiar también los otros bloques si quedaron con loader
+                    const fraseEl = document.getElementById('frase-del-dia-texto');
+                    if (fraseEl && fraseEl.querySelector('.loader-cosmico')) fraseEl.innerText = "—";
+                    ['texto-equilibrio','texto-luna-hoy','consejo-vida','consejo-laboral'].forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el && el.querySelector('.loader-cosmico')) el.innerText = "—";
+                    });
+                } finally {
+                    boton.disabled = false;
+                    boton.innerText = "Calcular Mi Mapa Astral";
+                }
+            });
+        });
+    </script>
+</body>
+</html>
