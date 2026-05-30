@@ -543,12 +543,22 @@
                 <label for="lugar-select">Ciudad y Estado de Nacimiento</label>
                 <select id="lugar-select" required>
                     <option value="" disabled selected>Selecciona tu ciudad...</option>
-                    <option value="24.02,-104.65,-6,Durango (Durango)">Durango, Durango</option>
-                    <option value="19.43,-99.13,-6,Ciudad de México (CDMX)">Ciudad de México, CDMX</option>
-                    <option value="25.68,-100.31,-6,Monterrey (Nuevo León)">Monterrey, Nuevo León</option>
-                    <option value="20.65,-103.34,-6,Guadalajara (Jalisco)">Guadalajara, Jalisco</option>
+                    <option value="21.8853,-102.2916,-6,Aguascalientes (Aguascalientes)">Aguascalientes, Aguascalientes</option>
                     <option value="21.16,-86.84,-5,Cancún (Quintana Roo)">Cancún, Quintana Roo</option>
+                    <option value="31.6904,-106.4245,-7,Ciudad Juárez (Chihuahua)">Ciudad Juárez, Chihuahua</option>
+                    <option value="19.43,-99.13,-6,Ciudad de México (CDMX)">Ciudad de México, CDMX</option>
+                    <option value="24.02,-104.65,-6,Durango (Durango)">Durango, Durango</option>
+                    <option value="20.65,-103.34,-6,Guadalajara (Jalisco)">Guadalajara, Jalisco</option>
+                    <option value="29.0729,-110.9559,-7,Hermosillo (Sonora)">Hermosillo, Sonora</option>
+                    <option value="21.1250,-101.6859,-6,León (Guanajuato)">León, Guanajuato</option>
                     <option value="20.96,-89.61,-6,Mérida (Yucatán)">Mérida, Yucatán</option>
+                    <option value="25.68,-100.31,-6,Monterrey (Nuevo León)">Monterrey, Nuevo León</option>
+                    <option value="19.0414,-98.2063,-6,Puebla (Puebla)">Puebla, Puebla</option>
+                    <option value="20.5888,-100.3899,-6,Querétaro (Querétaro)">Querétaro, Querétaro</option>
+                    <option value="26.0508,-98.2773,-6,Reynosa (Tamaulipas)">Reynosa, Tamaulipas</option>
+                    <option value="32.5149,-117.0382,-8,Tijuana (Baja California)">Tijuana, Baja California</option>
+                    <option value="19.2826,-99.6557,-6,Toluca (Estado de México)">Toluca, Estado de México</option>
+                    <option value="19.1738,-96.1342,-6,Veracruz (Veracruz)">Veracruz, Veracruz</option>
                 </select>
             </div>
 
@@ -1335,8 +1345,14 @@ Genera exactamente tres bloques, separados por las etiquetas exactas en mayúscu
             svg.innerHTML += `<circle cx="${cx}" cy="${cy}" r="${rInt}" fill="#fffdfa" stroke="#e6d5cb" stroke-width="1" />`;
             svg.innerHTML += `<circle cx="${cx}" cy="${cy}" r="${rCent}" fill="#fff9f3" stroke="#e6d5cb" stroke-width="1" />`;
 
+            // Rotación de la rueda: el ASC del usuario queda SIEMPRE a las 9 en punto
+            // (izquierda), como en cualquier carta natal profesional. El zodíaco corre
+            // en sentido antihorario en pantalla, así que avanzar de signo (Aries → Tauro
+            // → Géminis...) se mueve visualmente hacia abajo desde el ASC.
+            const gradoAsc = datos.Ascendente.deg;
             function transformarAnguloFijo(gradosZodiacales) {
-                return (-gradosZodiacales) * (Math.PI / 180);
+                const delta = (((gradosZodiacales - gradoAsc) % 360) + 360) % 360;
+                return Math.PI - delta * Math.PI / 180;
             }
 
             for (let i = 0; i < 12; i++) {
@@ -1677,31 +1693,4 @@ Guía con estructura para el pensamiento ordenado y la acción consciente en sus
                     document.getElementById('texto-natal-fijo').innerText  = interp.natal;
                     document.getElementById('texto-equilibrio').innerText  = interp.equilibrio;
                     document.getElementById('texto-luna-hoy').innerText    = interp.lunaHoy;
-                    document.getElementById('consejo-vida').innerText      = interp.vida;
-                    document.getElementById('consejo-laboral').innerText   = interp.laboral;
-
-                } catch (err) {
-                    console.error(err);
-                    errorBanner.textContent = "Algo no se pudo completar: " + (err.message || err);
-                    errorBanner.style.display = 'block';
-                    // También avisar en el dashboard si ya se mostró
-                    const natalEl = document.getElementById('texto-natal-fijo');
-                    if (natalEl && natalEl.querySelector('.loader-cosmico')) {
-                        natalEl.innerText = "La lectura interpretativa no pudo completarse (" + (err.message || err) + "). La carta mostrada arriba es astronómicamente correcta.";
-                    }
-                    // Limpiar también los otros bloques si quedaron con loader
-                    const fraseEl = document.getElementById('frase-del-dia-texto');
-                    if (fraseEl && fraseEl.querySelector('.loader-cosmico')) fraseEl.innerText = "—";
-                    ['texto-equilibrio','texto-luna-hoy','consejo-vida','consejo-laboral'].forEach(id => {
-                        const el = document.getElementById(id);
-                        if (el && el.querySelector('.loader-cosmico')) el.innerText = "—";
-                    });
-                } finally {
-                    boton.disabled = false;
-                    boton.innerText = "Calcular Mi Mapa Astral";
-                }
-            });
-        });
-    </script>
-</body>
-</html>
+                    document.getElementB
